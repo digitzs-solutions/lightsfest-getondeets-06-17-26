@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold text-gray-900;
+  }
+}
+
+#tokenex-card-number,
+#tokenex-cvv {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+#tokenex-card-number iframe,
+#tokenex-cvv iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  pointer-events: auto !important;
+  cursor: text !important;
+}

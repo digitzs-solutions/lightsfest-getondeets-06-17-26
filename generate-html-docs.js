@@ -1,0 +1,446 @@
+import { marked } from 'marked';
+import { readFile, writeFile, mkdir } from 'fs/promises';
+import { join, dirname, basename } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const rootDir = __dirname;
+const outputDir = join(__dirname, 'html-docs');
+
+await mkdir(outputDir, { recursive: true });
+await mkdir(join(outputDir, 'tokenex-architecture'), { recursive: true });
+
+const htmlTemplate = (title, content) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  ${content}
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>
+`;
+
+async function convertToHTML(mdPath, outputPath) {
+  try {
+    const fileName = basename(mdPath, '.md');
+    console.log(`Converting ${fileName}.md to HTML...`);
+
+    const markdown = await readFile(mdPath, 'utf-8');
+    const html = marked.parse(markdown);
+    const fullHtml = htmlTemplate(fileName, html);
+
+    await writeFile(outputPath, fullHtml, 'utf-8');
+    console.log(`✓ Created ${basename(outputPath)}`);
+
+    return true;
+  } catch (error) {
+    console.error(`✗ Error converting ${basename(mdPath)}:`, error.message);
+    return false;
+  }
+}
+
+const docFiles = [
+  { input: 'DEPLOYMENT.md', output: 'DEPLOYMENT.html' },
+  { input: 'DIGITZS_PAYVIA_END_TO_END.md', output: 'DIGITZS_PAYVIA_END_TO_END.html' },
+  { input: 'IXOPAY_TOKENEX_REFERENCE.md', output: 'IXOPAY_TOKENEX_REFERENCE.html' },
+  { input: 'PAYVIA_INTEGRATION.md', output: 'PAYVIA_INTEGRATION.html' },
+  { input: 'QUICK_START_DIGITZS.md', output: 'QUICK_START_DIGITZS.html' },
+  { input: 'SETUP_DIGITZS_SECURITY_KEY.md', output: 'SETUP_DIGITZS_SECURITY_KEY.html' },
+  { input: 'TICKETSOCKET_SETUP.md', output: 'TICKETSOCKET_SETUP.html' },
+  { input: 'TOKENEX_SETUP.md', output: 'TOKENEX_SETUP.html' },
+  { input: 'PAYVIA_API_QA_REPORT.md', output: 'PAYVIA_API_QA_REPORT.html' },
+  {
+    input: 'docs/tokenex-architecture/DIGITZS_DIRECT_INTEGRATION.md',
+    output: 'tokenex-architecture/DIGITZS_DIRECT_INTEGRATION.html'
+  },
+  {
+    input: 'docs/tokenex-architecture/DIGITZS_NMI_SECURITY_KEY.md',
+    output: 'tokenex-architecture/DIGITZS_NMI_SECURITY_KEY.html'
+  },
+  {
+    input: 'docs/tokenex-architecture/IMPLEMENTATION_STATUS.md',
+    output: 'tokenex-architecture/IMPLEMENTATION_STATUS.html'
+  },
+  {
+    input: 'docs/tokenex-architecture/PAYVIA_WRAPPER_DETAILS.md',
+    output: 'tokenex-architecture/PAYVIA_WRAPPER_DETAILS.html'
+  },
+  {
+    input: 'docs/tokenex-architecture/TOKENEX_END_TO_END_PROCESS.md',
+    output: 'tokenex-architecture/TOKENEX_END_TO_END_PROCESS.html'
+  },
+];
+
+console.log('Starting HTML generation...\n');
+console.log('═'.repeat(70));
+
+let successCount = 0;
+let errorCount = 0;
+
+for (const doc of docFiles) {
+  const inputPath = join(rootDir, doc.input);
+  const outputPath = join(outputDir, doc.output);
+
+  const success = await convertToHTML(inputPath, outputPath);
+  if (success) {
+    successCount++;
+  } else {
+    errorCount++;
+  }
+}
+
+console.log('═'.repeat(70));
+console.log(`\n✨ HTML Generation Complete!\n`);
+console.log(`  ✓ Success: ${successCount} files`);
+console.log(`  ✗ Errors: ${errorCount} files`);
+console.log(`\n📁 Output directory: ${outputDir}`);
+console.log(`\n💡 To convert to PDF:`);
+console.log(`   1. Open any HTML file in your browser`);
+console.log(`   2. Click the "Print / Save as PDF" button`);
+console.log(`   3. Select "Save as PDF" in the print dialog`);
+console.log(`   4. Choose your destination\n`);
+console.log('═'.repeat(70));
+
+await writeFile(
+  join(outputDir, 'INDEX.html'),
+  htmlTemplate(
+    'Documentation Index',
+    `
+      <h1>📚 Project Documentation</h1>
+      <p>All documentation files have been converted to HTML. Click any link below to view, or use the "Print / Save as PDF" button on each page to create a PDF.</p>
+
+      <h2>🚀 Quick Start</h2>
+      <ul>
+        <li><a href="SETUP_DIGITZS_SECURITY_KEY.html"><strong>SETUP_DIGITZS_SECURITY_KEY</strong></a> - How to get and configure your Digitzs security key (START HERE!)</li>
+        <li><a href="QUICK_START_DIGITZS.html">QUICK_START_DIGITZS</a> - 5-minute setup guide</li>
+      </ul>
+
+      <h2>🔧 Integration Guides</h2>
+      <ul>
+        <li><a href="DIGITZS_PAYVIA_END_TO_END.html">DIGITZS_PAYVIA_END_TO_END</a> - Complete payment flow documentation</li>
+        <li><a href="PAYVIA_INTEGRATION.html">PAYVIA_INTEGRATION</a> - Payvia wrapper integration</li>
+        <li><a href="TICKETSOCKET_SETUP.html">TICKETSOCKET_SETUP</a> - TicketSocket configuration</li>
+        <li><a href="TOKENEX_SETUP.html">TOKENEX_SETUP</a> - TokenEx setup guide</li>
+      </ul>
+
+      <h2>📖 Reference Documentation</h2>
+      <ul>
+        <li><a href="IXOPAY_TOKENEX_REFERENCE.html">IXOPAY_TOKENEX_REFERENCE</a> - TokenEx API reference</li>
+        <li><a href="DEPLOYMENT.html">DEPLOYMENT</a> - Deployment instructions</li>
+        <li><a href="PAYVIA_API_QA_REPORT.html"><strong>PAYVIA_API_QA_REPORT</strong></a> - Comprehensive API QA testing and findings</li>
+      </ul>
+
+      <h2>🏗️ Architecture Details</h2>
+      <ul>
+        <li><a href="tokenex-architecture/DIGITZS_DIRECT_INTEGRATION.html">DIGITZS_DIRECT_INTEGRATION</a> - Direct API implementation</li>
+        <li><a href="tokenex-architecture/DIGITZS_NMI_SECURITY_KEY.html">DIGITZS_NMI_SECURITY_KEY</a> - Security key detailed guide</li>
+        <li><a href="tokenex-architecture/TOKENEX_END_TO_END_PROCESS.html">TOKENEX_END_TO_END_PROCESS</a> - TokenEx recovery checklist</li>
+        <li><a href="tokenex-architecture/PAYVIA_WRAPPER_DETAILS.html">PAYVIA_WRAPPER_DETAILS</a> - Payvia wrapper internals</li>
+        <li><a href="tokenex-architecture/IMPLEMENTATION_STATUS.html">IMPLEMENTATION_STATUS</a> - Current system status</li>
+      </ul>
+
+      <hr>
+
+      <h2>💾 Converting to PDF</h2>
+      <p><strong>Method 1: Using the Print Button (Easiest)</strong></p>
+      <ol>
+        <li>Click any documentation link above</li>
+        <li>Click the blue "🖨️ Print / Save as PDF" button in the top-right corner</li>
+        <li>In the print dialog, select "Save as PDF" as the destination</li>
+        <li>Click "Save" and choose your location</li>
+      </ol>
+
+      <p><strong>Method 2: Using Browser Menu</strong></p>
+      <ol>
+        <li>Open any HTML file</li>
+        <li>Press <code>Ctrl+P</code> (Windows/Linux) or <code>Cmd+P</code> (Mac)</li>
+        <li>Select "Save as PDF" as the destination</li>
+        <li>Adjust settings if needed (margins, headers, etc.)</li>
+        <li>Click "Save"</li>
+      </ol>
+
+      <p><strong>Method 3: Batch Conversion (Advanced)</strong></p>
+      <p>Use a headless browser or automation tool to batch convert all files:</p>
+      <pre><code># Using Chrome/Chromium from command line
+for file in html-docs/*.html; do
+  chromium --headless --disable-gpu --print-to-pdf="$file.pdf" "$file"
+done</code></pre>
+
+      <hr>
+
+      <p style="text-align: center; color: #718096; margin-top: 40px;">
+        <strong>Generated:</strong> ${new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}<br>
+        <strong>Total Documents:</strong> ${successCount}
+      </p>
+    `
+  ),
+  'utf-8'
+);
+
+console.log(`\n📋 Index page created: ${join(outputDir, 'INDEX.html')}`);
+console.log(`\nOpen INDEX.html in your browser to navigate all documentation.\n`);

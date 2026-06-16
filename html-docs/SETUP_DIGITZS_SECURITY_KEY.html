@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SETUP_DIGITZS_SECURITY_KEY</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>🔑 Get Your Digitzs Security Key - Step by Step</h1>
+<h2>⚠️ YOU NEED THIS KEY RIGHT NOW</h2>
+<p>Your application is showing <strong>&quot;DIGITZS_SECURITY_KEY not configured&quot;</strong> because this environment variable is missing from Supabase.</p>
+<p><strong>This is NOT in your TokenEx account</strong> - it&#39;s a separate key from your NMI gateway portal.</p>
+<hr>
+<h2>📋 What You Need</h2>
+<ul>
+<li>Access to <strong>digitzs.transactiongateway.com</strong></li>
+<li>Your Digitzs merchant login credentials</li>
+<li>5 minutes</li>
+</ul>
+<hr>
+<h2>🚀 Step-by-Step Instructions</h2>
+<h3>Step 1: Log Into Digitzs Gateway Portal</h3>
+<ol>
+<li><p>Open your browser and go to:</p>
+<pre><code>https://digitzs.transactiongateway.com
+</code></pre>
+</li>
+<li><p>Enter your merchant credentials:</p>
+<ul>
+<li><strong>Username</strong>: Your Digitzs merchant username</li>
+<li><strong>Password</strong>: Your gateway password</li>
+</ul>
+<p><em>(If you don&#39;t have these, contact <a href="mailto:Laura@digitzs.com">Laura@digitzs.com</a>)</em></p>
+</li>
+<li><p>Click <strong>Login</strong></p>
+</li>
+</ol>
+<hr>
+<h3>Step 2: Navigate to Security Keys</h3>
+<p>Once logged in:</p>
+<ol>
+<li>Look at the top navigation menu</li>
+<li>Click on <strong>Settings</strong></li>
+<li>In the dropdown menu, select <strong>Security Keys</strong></li>
+<li>Click on the <strong>API Security Keys</strong> tab</li>
+</ol>
+<hr>
+<h3>Step 3: Get Your Security Key</h3>
+<p>You should now see your API Security Key displayed.</p>
+<p><strong>It looks like this:</strong></p>
+<pre><code>2F822Rw39fx762MaV7Yy86jXGTC7sCDy
+</code></pre>
+<p><strong>Key characteristics:</strong></p>
+<ul>
+<li>32 characters long</li>
+<li>Mix of letters and numbers</li>
+<li>Alphanumeric only (no special characters)</li>
+</ul>
+<p><strong>Actions:</strong></p>
+<p>✅ <strong>If you see a key:</strong> Copy it to your clipboard (click the copy icon or select and copy)</p>
+<p>❌ <strong>If you don&#39;t see a key:</strong> Click the <strong>&quot;Generate New Key&quot;</strong> button, then copy it</p>
+<p>⚠️ <strong>Important:</strong> Keep this key secure! It authenticates all API requests to your payment gateway.</p>
+<hr>
+<h3>Step 4: Add Key to Supabase Edge Functions</h3>
+<p>Now you need to add this key as a secret in Supabase:</p>
+<h4>Option A: Via Supabase Dashboard (Easiest)</h4>
+<ol>
+<li><p>Go to your Supabase project dashboard:</p>
+<pre><code>https://supabase.com/dashboard/project/hppsbqucfklrrytfftye
+</code></pre>
+</li>
+<li><p>In the left sidebar, click <strong>Edge Functions</strong></p>
+</li>
+<li><p>Click on <strong>Secrets</strong> in the Edge Functions menu</p>
+</li>
+<li><p>Click <strong>Add new secret</strong> button</p>
+</li>
+<li><p>Fill in the form:</p>
+<ul>
+<li><strong>Name</strong>: <code>DIGITZS_SECURITY_KEY</code></li>
+<li><strong>Value</strong>: [Paste your 32-character key here]</li>
+</ul>
+</li>
+<li><p>Click <strong>Save</strong></p>
+</li>
+<li><p>✅ Done! The secret is now available to all Edge Functions</p>
+</li>
+</ol>
+<h4>Option B: Via Supabase CLI (Advanced)</h4>
+<p>If you prefer command line:</p>
+<pre><code class="language-bash"># Set the secret
+supabase secrets set DIGITZS_SECURITY_KEY=&lt;paste-your-key-here&gt;
+
+# Verify it was set
+supabase secrets list
+</code></pre>
+<p>You should see <code>DIGITZS_SECURITY_KEY</code> in the output.</p>
+<hr>
+<h3>Step 5: Test Your Integration</h3>
+<p>Now let&#39;s verify everything works:</p>
+<ol>
+<li><p><strong>Open your application</strong> in a web browser</p>
+</li>
+<li><p><strong>Navigate to the ticket purchase page</strong></p>
+</li>
+<li><p><strong>Fill in customer information:</strong></p>
+<ul>
+<li>First Name: Test</li>
+<li>Last Name: User</li>
+<li>Email: <a href="mailto:test@example.com">test@example.com</a></li>
+<li>Phone: 555-123-4567</li>
+</ul>
+</li>
+<li><p><strong>Enter test card details:</strong></p>
+<ul>
+<li>Card Number: <code>4242 4242 4242 4242</code></li>
+<li>Expiry Date: <code>12/25</code></li>
+<li>CVV: <code>123</code></li>
+</ul>
+</li>
+<li><p><strong>Click Submit Payment</strong></p>
+</li>
+</ol>
+<hr>
+<h3>✅ Success Indicators</h3>
+<p>If everything is working correctly, you should see:</p>
+<ul>
+<li>✅ No &quot;DIGITZS_SECURITY_KEY not configured&quot; error</li>
+<li>✅ Payment processes successfully</li>
+<li>✅ You receive a transaction ID in the response</li>
+<li>✅ Success confirmation message appears</li>
+<li>✅ Transaction shows up in Digitzs gateway portal under <strong>Reports</strong> → <strong>Transactions</strong></li>
+</ul>
+<hr>
+<h3>❌ Troubleshooting</h3>
+<h4>Still Getting &quot;Security Key Not Configured&quot;?</h4>
+<p><strong>Check 1: Verify the secret exists</strong></p>
+<ol>
+<li>Go to Supabase Dashboard → Edge Functions → Secrets</li>
+<li>Look for <code>DIGITZS_SECURITY_KEY</code> in the list</li>
+<li>If missing, repeat Step 4</li>
+</ol>
+<p><strong>Check 2: Verify the key is correct</strong></p>
+<ol>
+<li>Log back into digitzs.transactiongateway.com</li>
+<li>Go to Settings → Security Keys → API Security Keys</li>
+<li>Copy the key again (make sure no spaces or line breaks)</li>
+<li>Update the Supabase secret with the correct value</li>
+</ol>
+<p><strong>Check 3: Test the key directly</strong></p>
+<p>Run this command to test your security key:</p>
+<pre><code class="language-bash">curl -X POST https://digitzs.transactiongateway.com/api/transact.php \
+  -d &quot;security_key=YOUR_KEY_HERE&quot; \
+  -d &quot;type=validate&quot;
+</code></pre>
+<p><strong>Expected response:</strong></p>
+<pre><code>response=1&amp;responsetext=SUCCESS
+</code></pre>
+<p><strong>Error response:</strong></p>
+<pre><code>response=3&amp;responsetext=Invalid security key
+</code></pre>
+<p>If you get an error, your key is incorrect. Get a fresh copy from the portal.</p>
+<hr>
+<h4>Error: &quot;Invalid Security Key&quot;</h4>
+<p><strong>Possible causes:</strong></p>
+<ul>
+<li>Key was copied incorrectly (extra spaces, line breaks)</li>
+<li>Key was regenerated in the portal (old key no longer valid)</li>
+<li>Wrong merchant account / portal login</li>
+</ul>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Log into digitzs.transactiongateway.com</li>
+<li>Generate a NEW security key</li>
+<li>Update the Supabase secret with the new key</li>
+<li>Test again</li>
+</ol>
+<hr>
+<h4>Transactions Declining</h4>
+<p>If the security key works but transactions are declining:</p>
+<p><strong>Check 1: Card number</strong></p>
+<ul>
+<li>Use test card: <code>4242424242424242</code></li>
+<li>No spaces when testing the API</li>
+<li>Must be valid Luhn checksum</li>
+</ul>
+<p><strong>Check 2: MID status</strong></p>
+<ol>
+<li>Log into Digitzs portal</li>
+<li>Click on <strong>Account</strong> → <strong>Account Settings</strong></li>
+<li>Verify Merchant ID <strong>33595002</strong> is active and approved</li>
+</ol>
+<p><strong>Check 3: Gateway logs</strong></p>
+<ol>
+<li>Go to <strong>Reports</strong> → <strong>Transaction Search</strong></li>
+<li>Look for your recent test transactions</li>
+<li>Check decline reasons and response codes</li>
+</ol>
+<p><strong>Check 4: Processor status</strong></p>
+<ul>
+<li>Contact Digitzs support if MID shows as inactive</li>
+<li>Verify Propay MID 33595002 is configured correctly</li>
+</ul>
+<hr>
+<h4>Error: &quot;Communication Error&quot;</h4>
+<p><strong>Possible causes:</strong></p>
+<ul>
+<li>Network connectivity issues</li>
+<li>Gateway maintenance</li>
+<li>SSL/TLS certificate issues</li>
+</ul>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Check gateway status (contact Digitzs support)</li>
+<li>Verify your Supabase Edge Function has internet access</li>
+<li>Try again in a few minutes</li>
+<li>Check Digitzs status page or support channels</li>
+</ol>
+<hr>
+<h2>🔒 Security Best Practices</h2>
+<h3>Protecting Your Security Key</h3>
+<ol>
+<li><p><strong>NEVER commit to Git</strong></p>
+<ul>
+<li>Keys should only be in Supabase secrets</li>
+<li>Never in <code>.env</code> files that get committed</li>
+<li>Use <code>.gitignore</code> to exclude sensitive files</li>
+</ul>
+</li>
+<li><p><strong>Rotate keys periodically</strong></p>
+<ul>
+<li>Generate new keys quarterly</li>
+<li>Update in Supabase immediately after generating</li>
+<li>Revoke old keys after updating</li>
+</ul>
+</li>
+<li><p><strong>Use different keys per environment</strong></p>
+<ul>
+<li>Development: Test account security key</li>
+<li>Production: Live account security key</li>
+<li>Never mix test and live keys</li>
+</ul>
+</li>
+<li><p><strong>Monitor for unauthorized usage</strong></p>
+<ul>
+<li>Review transaction logs regularly</li>
+<li>Set up alerts for unusual activity</li>
+<li>Check for failed authentication attempts</li>
+<li>Investigate any suspicious patterns</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>📞 Need Help?</h2>
+<h3>Can&#39;t Log Into Digitzs Portal?</h3>
+<p>Contact your merchant account representative:</p>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:Laura@digitzs.com">Laura@digitzs.com</a></li>
+<li><strong>Subject</strong>: &quot;Need Digitzs gateway login credentials&quot;</li>
+</ul>
+<h3>Security Key Not Working?</h3>
+<p>Contact Digitzs technical support:</p>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:support@nmi.com">support@nmi.com</a></li>
+<li><strong>Phone</strong>: 1-866-481-3280</li>
+<li><strong>Portal</strong>: <a href="https://digitzs.transactiongateway.com/merchants/support">https://digitzs.transactiongateway.com/merchants/support</a></li>
+</ul>
+<h3>Still Having Issues?</h3>
+<p>Make sure you have:</p>
+<ul>
+<li>✅ Correct 32-character security key from Digitzs portal</li>
+<li>✅ Added key to Supabase as <code>DIGITZS_SECURITY_KEY</code></li>
+<li>✅ No typos, spaces, or line breaks in the key</li>
+<li>✅ MID 33595002 is active in Digitzs portal</li>
+<li>✅ Using test card 4242424242424242 for testing</li>
+</ul>
+<hr>
+<h2>🎯 What This Key Does</h2>
+<p>Your Digitzs Security Key is used to:</p>
+<ol>
+<li><strong>Authenticate API requests</strong> to the NMI gateway</li>
+<li><strong>Process credit card transactions</strong> through Propay MID 33595002</li>
+<li><strong>Submit sales, voids, refunds, and other operations</strong></li>
+<li><strong>Query transaction status and reports</strong></li>
+</ol>
+<p><strong>Current flow:</strong></p>
+<pre><code>Your App → DigitzsCheckout Component →
+digitzs-direct Edge Function (uses DIGITZS_SECURITY_KEY) →
+Digitzs Gateway API (digitzs.transactiongateway.com) →
+Propay MID 33595002 → Card Networks (Visa/MC/Amex)
+</code></pre>
+<hr>
+<h2>📊 Verification Checklist</h2>
+<p>Before moving forward, verify:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Logged into digitzs.transactiongateway.com successfully</li>
+<li><input disabled="" type="checkbox"> Found Security Keys section under Settings</li>
+<li><input disabled="" type="checkbox"> Copied 32-character API Security Key</li>
+<li><input disabled="" type="checkbox"> Added key to Supabase Edge Functions Secrets</li>
+<li><input disabled="" type="checkbox"> Named the secret exactly: <code>DIGITZS_SECURITY_KEY</code></li>
+<li><input disabled="" type="checkbox"> No spaces or line breaks in the key value</li>
+<li><input disabled="" type="checkbox"> Tested a transaction with card 4242424242424242</li>
+<li><input disabled="" type="checkbox"> Received successful response with transaction ID</li>
+<li><input disabled="" type="checkbox"> Transaction appears in Digitzs portal reports</li>
+</ul>
+<hr>
+<h2>🔄 Next Steps After Setup</h2>
+<p>Once your key is configured and working:</p>
+<ol>
+<li><strong>Test thoroughly</strong> with various test cards</li>
+<li><strong>Review transaction logs</strong> in Digitzs portal</li>
+<li><strong>Set up error monitoring</strong> for declined transactions</li>
+<li><strong>Configure email receipts</strong> for customers</li>
+<li><strong>Review PCI compliance requirements</strong> (you&#39;re now processing card data directly)</li>
+</ol>
+<hr>
+<h2>📚 Related Documentation</h2>
+<ul>
+<li><strong><code>QUICK_START_DIGITZS.md</code></strong> - Quick 5-minute setup guide</li>
+<li><strong><code>DIGITZS_NMI_SECURITY_KEY.md</code></strong> - Detailed security key documentation</li>
+<li><strong><code>TOKENEX_END_TO_END_PROCESS.md</code></strong> - TokenEx recovery when account reactivates</li>
+<li><strong><code>DIGITZS_DIRECT_INTEGRATION.md</code></strong> - Full API implementation guide</li>
+<li><strong><code>IMPLEMENTATION_STATUS.md</code></strong> - Current system status</li>
+</ul>
+<hr>
+<p><strong>Last Updated</strong>: March 24, 2026
+<strong>Version</strong>: 1.0
+<strong>Status</strong>: Critical - Required for Payment Processing</p>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

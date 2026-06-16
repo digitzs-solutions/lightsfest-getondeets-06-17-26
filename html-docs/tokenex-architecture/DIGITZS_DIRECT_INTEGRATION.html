@@ -1,0 +1,655 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIGITZS_DIRECT_INTEGRATION</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Direct Digitzs/NMI Integration (Backup Solution)</h1>
+<h2>Overview</h2>
+<p>Direct integration to Digitzs (NMI white label) using the same Propay MID 33595002 that was configured through Tokenex.</p>
+<h2>Why Direct Integration?</h2>
+<h3>Pros</h3>
+<ul>
+<li>No dependency on Tokenex</li>
+<li>Lower monthly costs (no Tokenex fees)</li>
+<li>Faster transaction processing (one less hop)</li>
+<li>Full control over payment flow</li>
+</ul>
+<h3>Cons</h3>
+<ul>
+<li>Increased PCI compliance scope</li>
+<li>Card data touches your frontend</li>
+<li>Limited to NMI/Digitzs processors only</li>
+<li>Must implement own tokenization</li>
+</ul>
+<h2>Architecture</h2>
+<h3>Payment Flow</h3>
+<pre><code>Customer → Your Hosted Form → Your Edge Function → Digitzs API → Propay MID 33595002
+</code></pre>
+<h3>Security Considerations</h3>
+<ol>
+<li>Use HTTPS everywhere</li>
+<li>Never log card numbers</li>
+<li>Use Digitzs&#39;s Customer Vault for tokenization</li>
+<li>Implement proper CSP headers</li>
+<li>Add rate limiting to prevent abuse</li>
+</ol>
+<h2>API Integration</h2>
+<h3>Endpoint</h3>
+<pre><code>POST https://digitzs.transactiongateway.com/api/transact.php
+</code></pre>
+<h3>Authentication</h3>
+<p>Uses security key in POST body (not headers)</p>
+<h3>Request Format (Sale Transaction)</h3>
+<pre><code class="language-http">POST /api/transact.php HTTP/1.1
+Host: digitzs.transactiongateway.com
+Content-Type: application/x-www-form-urlencoded
+
+security_key=YOUR_SECURITY_KEY
+&amp;type=sale
+&amp;amount=45.00
+&amp;ccnumber=4111111111111111
+&amp;ccexp=1225
+&amp;cvv=999
+&amp;firstname=John
+&amp;lastname=Doe
+&amp;email=john@example.com
+&amp;phone=5555555555
+&amp;address1=123 Main St
+&amp;city=Austin
+&amp;state=TX
+&amp;zip=78701
+&amp;country=US
+&amp;orderid=ORDER-123
+&amp;ipaddress=192.168.1.1
+</code></pre>
+<h3>Response Format (Success)</h3>
+<pre><code class="language-http">response=1
+&amp;responsetext=SUCCESS
+&amp;authcode=123456
+&amp;transactionid=7890123456
+&amp;avsresponse=Y
+&amp;cvvresponse=M
+&amp;orderid=ORDER-123
+&amp;response_code=100
+</code></pre>
+<h3>Response Codes</h3>
+<ul>
+<li><strong>1</strong> = Approved</li>
+<li><strong>2</strong> = Declined</li>
+<li><strong>3</strong> = Error</li>
+</ul>
+<h2>Customer Vault (Tokenization)</h2>
+<h3>Why Use Customer Vault?</h3>
+<ul>
+<li>Store card data securely at NMI/Digitzs</li>
+<li>Reduces your PCI scope</li>
+<li>Enable recurring payments</li>
+<li>Fast repeat purchases</li>
+</ul>
+<h3>Add Customer</h3>
+<pre><code class="language-http">POST /api/transact.php
+security_key=YOUR_SECURITY_KEY
+&amp;customer_vault=add_customer
+&amp;ccnumber=4111111111111111
+&amp;ccexp=1225
+&amp;firstname=John
+&amp;lastname=Doe
+&amp;email=john@example.com
+</code></pre>
+<h3>Response</h3>
+<pre><code>response=1
+&amp;customer_vault_id=1234567890
+</code></pre>
+<h3>Charge Using Vault</h3>
+<pre><code class="language-http">POST /api/transact.php
+security_key=YOUR_SECURITY_KEY
+&amp;type=sale
+&amp;amount=45.00
+&amp;customer_vault_id=1234567890
+&amp;cvv=999
+</code></pre>
+<h2>Implementation</h2>
+<h3>Edge Function Structure</h3>
+<pre><code class="language-typescript">// supabase/functions/digitzs-process/index.ts
+
+interface DigitzsRequest {
+  amount: number;
+  cardNumber: string;
+  cardExpiry: string; // MMYY format
+  cvv: string;
+  customerInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
+  orderId: string;
+  ipAddress: string;
+}
+
+// Convert to form-encoded format
+const formData = new URLSearchParams({
+  security_key: DIGITZS_SECURITY_KEY,
+  type: &#39;sale&#39;,
+  amount: amount.toFixed(2),
+  ccnumber: cardNumber,
+  ccexp: cardExpiry,
+  cvv: cvv,
+  firstname: firstName,
+  lastname: lastName,
+  email: email,
+  // ... more fields
+});
+
+// POST to Digitzs
+const response = await fetch(
+  &#39;https://digitzs.transactiongateway.com/api/transact.php&#39;,
+  {
+    method: &#39;POST&#39;,
+    headers: {
+      &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;,
+    },
+    body: formData.toString(),
+  }
+);
+</code></pre>
+<h3>Frontend Form</h3>
+<pre><code class="language-typescript">// Secure payment form component
+&lt;form onSubmit={handleSubmit}&gt;
+  &lt;input
+    type=&quot;text&quot;
+    maxLength={19}
+    placeholder=&quot;Card Number&quot;
+    autoComplete=&quot;cc-number&quot;
+  /&gt;
+  &lt;input
+    type=&quot;text&quot;
+    maxLength={4}
+    placeholder=&quot;MMYY&quot;
+    autoComplete=&quot;cc-exp&quot;
+  /&gt;
+  &lt;input
+    type=&quot;text&quot;
+    maxLength={4}
+    placeholder=&quot;CVV&quot;
+    autoComplete=&quot;cc-csc&quot;
+  /&gt;
+  {/* Customer info fields */}
+&lt;/form&gt;
+</code></pre>
+<h2>Testing</h2>
+<h3>Test Cards (Digitzs/NMI)</h3>
+<pre><code>Visa Approval: 4111111111111111
+Visa Decline: 4000300011112220
+Mastercard Approval: 5499740000000057
+Amex Approval: 371449635398431
+
+CVV: Any 3-4 digits
+Expiry: Any future date (MMYY format)
+</code></pre>
+<h3>Test Mode</h3>
+<ul>
+<li>Use test security key from Digitzs portal</li>
+<li>Test transactions don&#39;t hit real card networks</li>
+<li>Test data doesn&#39;t appear in production reports</li>
+</ul>
+<h2>Error Handling</h2>
+<h3>Common Errors</h3>
+<pre><code class="language-typescript">const errorMessages: Record&lt;string, string&gt; = {
+  &#39;200&#39;: &#39;Transaction declined&#39;,
+  &#39;201&#39;: &#39;Do not honor&#39;,
+  &#39;202&#39;: &#39;Insufficient funds&#39;,
+  &#39;203&#39;: &#39;Over limit&#39;,
+  &#39;204&#39;: &#39;Transaction not allowed&#39;,
+  &#39;220&#39;: &#39;Incorrect payment information&#39;,
+  &#39;221&#39;: &#39;No such card issuer&#39;,
+  &#39;222&#39;: &#39;No card number on file&#39;,
+  &#39;223&#39;: &#39;Expired card&#39;,
+  &#39;224&#39;: &#39;Invalid expiration date&#39;,
+  &#39;225&#39;: &#39;Invalid security code&#39;,
+  &#39;240&#39;: &#39;Call issuer for further information&#39;,
+  &#39;250&#39;: &#39;Pick up card&#39;,
+  &#39;251&#39;: &#39;Lost card&#39;,
+  &#39;252&#39;: &#39;Stolen card&#39;,
+  &#39;253&#39;: &#39;Fraudulent card&#39;,
+  &#39;260&#39;: &#39;Declined with further instructions&#39;,
+  &#39;261&#39;: &#39;Declined - stop all recurring payments&#39;,
+  &#39;262&#39;: &#39;Declined - stop this recurring program&#39;,
+  &#39;263&#39;: &#39;Declined - update cardholder data available&#39;,
+  &#39;264&#39;: &#39;Declined - retry in a few days&#39;,
+  &#39;300&#39;: &#39;Transaction rejected&#39;,
+  &#39;400&#39;: &#39;Transaction error returned by processor&#39;,
+  &#39;410&#39;: &#39;Invalid merchant configuration&#39;,
+  &#39;411&#39;: &#39;Merchant account is inactive&#39;,
+  &#39;420&#39;: &#39;Communication error&#39;,
+  &#39;421&#39;: &#39;Communication error with issuer&#39;,
+  &#39;430&#39;: &#39;Duplicate transaction&#39;,
+  &#39;440&#39;: &#39;Processor format error&#39;,
+  &#39;441&#39;: &#39;Invalid transaction information&#39;,
+  &#39;460&#39;: &#39;Processor feature not available&#39;,
+  &#39;461&#39;: &#39;3D Secure required&#39;,
+};
+</code></pre>
+<h2>Security Best Practices</h2>
+<h3>1. Environment Variables</h3>
+<pre><code class="language-bash"># Store in Supabase Edge Function Secrets
+DIGITZS_SECURITY_KEY=your_security_key_here
+DIGITZS_MERCHANT_ID=33595002
+</code></pre>
+<h3>2. Input Validation</h3>
+<pre><code class="language-typescript">// Validate card number (Luhn algorithm)
+function isValidCardNumber(cardNumber: string): boolean {
+  // Implementation
+}
+
+// Validate expiry
+function isValidExpiry(expiry: string): boolean {
+  const [month, year] = expiry.match(/../g) || [];
+  // Check future date
+}
+
+// Validate CVV
+function isValidCVV(cvv: string, cardType: string): boolean {
+  return /^\d{3,4}$/.test(cvv);
+}
+</code></pre>
+<h3>3. Rate Limiting</h3>
+<pre><code class="language-typescript">// Implement rate limiting to prevent abuse
+const rateLimitKey = `ratelimit:${ipAddress}`;
+const attempts = await redis.incr(rateLimitKey);
+if (attempts &gt; 5) {
+  throw new Error(&#39;Too many attempts&#39;);
+}
+await redis.expire(rateLimitKey, 3600); // 1 hour
+</code></pre>
+<h3>4. Logging</h3>
+<pre><code class="language-typescript">// NEVER log card numbers or CVV
+console.log({
+  orderId,
+  amount,
+  lastFour: cardNumber.slice(-4),
+  // NEVER log full card number
+  result: response.responsetext,
+  transactionId: response.transactionid,
+});
+</code></pre>
+<h2>Migration from Tokenex</h2>
+<h3>Data Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Tokenex Field</th>
+<th>Digitzs Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Token</td>
+<td>customer_vault_id</td>
+<td>Use Customer Vault</td>
+</tr>
+<tr>
+<td>Amount</td>
+<td>amount</td>
+<td>Same format</td>
+</tr>
+<tr>
+<td>MerchantID</td>
+<td>Built into security_key</td>
+<td>No separate field</td>
+</tr>
+<tr>
+<td>Gateway</td>
+<td>N/A</td>
+<td>Direct to Digitzs</td>
+</tr>
+<tr>
+<td>TransactionType</td>
+<td>type</td>
+<td>sale/auth/capture/void</td>
+</tr>
+</tbody></table>
+<h3>Code Changes Required</h3>
+<ol>
+<li>Remove Tokenex iFrame component</li>
+<li>Add card input form</li>
+<li>Update edge function to call Digitzs directly</li>
+<li>Implement Customer Vault for tokenization</li>
+<li>Update error handling for Digitzs response codes</li>
+<li>Add additional PCI compliance measures</li>
+</ol>
+<h2>PCI Compliance Requirements</h2>
+<h3>SAQ A-EP (Self-Assessment Questionnaire)</h3>
+<p>When using direct integration without iFrame:</p>
+<ul>
+<li>Use HTTPS everywhere</li>
+<li>Don&#39;t store CVV ever</li>
+<li>Tokenize cards via Customer Vault</li>
+<li>Log access to cardholder data</li>
+<li>Use strong cryptography</li>
+<li>Maintain secure systems</li>
+<li>Implement access controls</li>
+<li>Monitor and test networks regularly</li>
+</ul>
+<h3>Reducing PCI Scope</h3>
+<ol>
+<li><strong>Use Customer Vault</strong>: Store cards at Digitzs</li>
+<li><strong>Don&#39;t store CVV</strong>: Never save CVV anywhere</li>
+<li><strong>Use TLS 1.2+</strong>: Encrypt data in transit</li>
+<li><strong>Minimize card data</strong>: Only collect what&#39;s needed</li>
+<li><strong>Use tokens</strong>: Reference vault IDs instead of cards</li>
+</ol>
+<h2>Production Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Switch to production security key</li>
+<li><input disabled="" type="checkbox"> Test with real cards in small amounts</li>
+<li><input disabled="" type="checkbox"> Implement error logging</li>
+<li><input disabled="" type="checkbox"> Set up transaction monitoring</li>
+<li><input disabled="" type="checkbox"> Configure fraud detection settings in Digitzs portal</li>
+<li><input disabled="" type="checkbox"> Test refund/void functionality</li>
+<li><input disabled="" type="checkbox"> Verify TicketSocket integration</li>
+<li><input disabled="" type="checkbox"> Set up automated reconciliation</li>
+<li><input disabled="" type="checkbox"> Document support procedures</li>
+<li><input disabled="" type="checkbox"> Train staff on new flow</li>
+</ul>
+<h2>Rollback Plan</h2>
+<p>If issues arise with direct integration:</p>
+<ol>
+<li>Keep Tokenex code in separate branch</li>
+<li>Document all Tokenex credentials</li>
+<li>Maintain Tokenex account relationship</li>
+<li>Test Tokenex reactivation in sandbox first</li>
+<li>Have feature flag to switch between integrations</li>
+</ol>
+<h2>Cost Comparison</h2>
+<h3>Tokenex + Digitzs</h3>
+<ul>
+<li>Tokenex: ~$500-1000/month base + per-transaction</li>
+<li>Processor fees: 2.9% + $0.30</li>
+</ul>
+<h3>Direct Digitzs</h3>
+<ul>
+<li>No Tokenex fees</li>
+<li>Processor fees: 2.9% + $0.30</li>
+<li>Potential savings: $6,000-12,000/year</li>
+</ul>
+<h2>Support</h2>
+<h3>Digitzs Support</h3>
+<ul>
+<li>Email: <a href="mailto:support@nmi.com">support@nmi.com</a></li>
+<li>Phone: (800) 617-4850</li>
+<li>Portal: <a href="https://secure.digitzs.transactiongateway.com">https://secure.digitzs.transactiongateway.com</a></li>
+<li>Docs: <a href="https://secure.digitzs.transactiongateway.com/merchants/resources/integration/integration_portal.php">https://secure.digitzs.transactiongateway.com/merchants/resources/integration/integration_portal.php</a></li>
+</ul>
+<h3>Emergency Contacts</h3>
+<ul>
+<li>MID: 33595002</li>
+<li>Security Key: (stored in secrets)</li>
+<li>Account Rep: (add contact info)</li>
+</ul>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

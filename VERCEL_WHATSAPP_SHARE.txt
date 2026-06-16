@@ -1,0 +1,39 @@
+Hey Tristan!
+
+Got the Lights Festival checkout app ready to deploy. Here's how to get it live:
+
+DEPLOY IN 2 MINUTES:
+
+1. Install Vercel:
+npm i -g vercel
+
+2. Deploy:
+vercel
+
+Just hit enter through the prompts (or name it "lightsfest")
+
+3. Add environment variables:
+vercel env add VITE_SUPABASE_URL
+vercel env add VITE_SUPABASE_ANON_KEY
+vercel env add VITE_TICKETSOCKET_API_KEY
+vercel env add VITE_TOKENEX_TOKEN_SCHEME
+vercel env add VITE_TOKENEX_AUTHENTICATION_KEY
+
+4. Push to production:
+vercel --prod
+
+You'll get a stable URL like:
+https://lightsfest-abc123.vercel.app
+
+This URL never changes, so we can whitelist it with TokenEx.
+
+WHAT'S LIVE:
+- Lights Festival full checkout
+- Dino World site
+- PayVia landing page
+- All database connections work
+- TokenEx iframe integration
+
+We can both test at the same time and see each other's transactions in real-time.
+
+Let me know when you deploy and I'll help test!

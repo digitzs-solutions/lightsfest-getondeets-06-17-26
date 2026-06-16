@@ -1,0 +1,1480 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIGITZS_PAYVIA_END_TO_END</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Digitzs/Payvia End-to-End Integration Guide</h1>
+<h2>Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#component-details">Component Details</a></li>
+<li><a href="#transaction-flow">Transaction Flow</a></li>
+<li><a href="#merchant-configuration">Merchant Configuration</a></li>
+<li><a href="#security--compliance">Security &amp; Compliance</a></li>
+<li><a href="#implementation-guide">Implementation Guide</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#production-deployment">Production Deployment</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ol>
+<hr>
+<h2>Overview</h2>
+<p>This document describes the <strong>headless Payvia checkout integration</strong> that wraps Digitzs/ProPay gateway routing through TokenEx iframe tokenization, transparently processing transactions through Stripe while maintaining full PCI DSS 4.0 compliance and comprehensive chargeback defense data collection.</p>
+<h3>Key Benefits</h3>
+<ul>
+<li><strong>PCI Compliant</strong>: TokenEx triple-hash encryption at device level</li>
+<li><strong>Fraud Protection</strong>: Device fingerprinting + IP tracking + geolocation</li>
+<li><strong>Chargeback Defense</strong>: Comprehensive transaction data logging</li>
+<li><strong>Processor Agnostic</strong>: Switch processors without code changes</li>
+<li><strong>Better Rates</strong>: 2.99% + $0.30 (vs Stripe&#39;s 3.5% for AMEX)</li>
+<li><strong>TicketSocket Compatible</strong>: Seamless integration with existing ticketing system</li>
+</ul>
+<hr>
+<h2>Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                         USER BROWSER                             │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │          Frontend React Application                       │   │
+│  │  - PayviaCheckout.tsx (UI)                               │   │
+│  │  - payvia.ts (Service Layer)                             │   │
+│  └────────────────┬─────────────────────────────────────────┘   │
+│                   │                                              │
+│  ┌────────────────▼──────────────────────────────────────────┐  │
+│  │          TokenEx Iframe (PCI Scope Boundary)              │  │
+│  │  - Triple-hash encryption at device level                 │  │
+│  │  - Card data never touches application servers            │  │
+│  │  - Returns secure token only                              │  │
+│  └────────────────┬──────────────────────────────────────────┘  │
+└───────────────────┼─────────────────────────────────────────────┘
+                    │ Tokenized Card Data
+                    │
+┌───────────────────▼─────────────────────────────────────────────┐
+│                    SUPABASE EDGE FUNCTIONS                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  tokenex-auth Edge Function                              │   │
+│  │  - Generates HMAC-SHA256 authentication key              │   │
+│  │  - 20-minute expiration window                           │   │
+│  │  - Keeps secret key server-side only                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  payvia-process Edge Function                            │   │
+│  │  - Receives tokenized transaction data                   │   │
+│  │  - Routes through Digitzs gateway                        │   │
+│  │  - Logs chargeback defense data                          │   │
+│  └────────────────┬─────────────────────────────────────────┘   │
+└───────────────────┼─────────────────────────────────────────────┘
+                    │ Gateway API Call
+                    │
+┌───────────────────▼─────────────────────────────────────────────┐
+│                    DIGITZS GATEWAY                               │
+│  Merchant ID: digitzs-escapefrom-33738480-5013250-1771270463    │
+│  - Transparent gateway routing                                   │
+│  - Fraud detection &amp; filtering                                   │
+│  - Transaction logging                                           │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────────┐
+│                    PROPAY GATEWAY                                │
+│  ProPay MID: 33738480-5013250-1771270463                        │
+│  - ACH processing capability                                     │
+│  - Multi-processor support                                       │
+│  - Settlement management                                         │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────────┐
+│                    STRIPE PROCESSOR                              │
+│  - Final card processing                                         │
+│  - Settlement to merchant account                                │
+│  - Webhook callbacks to TicketSocket                             │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────────┐
+│                  TICKETSOCKET BACKEND                            │
+│  - Receives Stripe transaction records                           │
+│  - Issues tickets and confirmations                              │
+│  - Unaware of Payvia/TokenEx layer                              │
+└──────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>Component Details</h2>
+<h3>1. Frontend Components</h3>
+<h4><code>/src/components/PayviaCheckout.tsx</code></h4>
+<p>React component that renders the checkout UI.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+<li>Embeds TokenEx iframes for card number and CVV fields</li>
+<li>Collects customer information (name, email, phone)</li>
+<li>Gathers device fingerprinting data</li>
+<li>Handles form validation and submission</li>
+<li>Processes payment responses</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Real-time card validation</li>
+<li>PCI-compliant card data handling (never touches server)</li>
+<li>Device data collection for fraud prevention</li>
+<li>Error handling and user feedback</li>
+</ul>
+<h4><code>/src/services/payvia.ts</code></h4>
+<p>Service layer for payment processing.</p>
+<p><strong>Key Functions:</strong></p>
+<pre><code class="language-typescript">// Initialize TokenEx iframe with authentication
+initializeTokenex(containerIds: { card: string; cvv: string })
+
+// Process payment transaction
+processPayviaTransaction(
+  transactionData: TransactionData,
+  tokenexToken: string
+): Promise&lt;PayviaResponse&gt;
+
+// Create order before payment
+createPayviaOrder(orderData: OrderData): Promise&lt;PayviaResponse&gt;
+</code></pre>
+<p><strong>Device Data Collected:</strong></p>
+<ul>
+<li>IP Address (captured server-side)</li>
+<li>User Agent</li>
+<li>Browser Language</li>
+<li>Screen Resolution</li>
+<li>Timezone</li>
+<li>Geolocation (if permitted)</li>
+</ul>
+<h3>2. Backend Edge Functions</h3>
+<h4><code>/supabase/functions/tokenex-auth/index.ts</code></h4>
+<p><strong>Purpose:</strong> Generate time-limited HMAC authentication keys for TokenEx iframe initialization.</p>
+<p><strong>Authentication Key Generation:</strong></p>
+<pre><code class="language-javascript">// Concatenate TokenEx ID, origin, timestamp, and token scheme
+const payload = `${tokenExID}|${origin}|${timestamp}|${tokenScheme}`;
+
+// Generate HMAC-SHA256 signature with secret key
+const authKey = HMAC-SHA256(payload, TOKENEX_SECRET_KEY);
+
+// Base64 encode the signature
+const authenticationKey = Base64(authKey);
+</code></pre>
+<p><strong>Timestamp Format:</strong> <code>yyyyMMddHHmmss</code> (UTC)</p>
+<p><strong>Expiration:</strong> 20 minutes from generation</p>
+<p><strong>Environment Variables:</strong></p>
+<ul>
+<li><code>TOKENEX_ID</code>: TokenEx account identifier</li>
+<li><code>TOKENEX_API_KEY</code>: Client secret key (HMAC signing key)</li>
+</ul>
+<p><strong>Security:</strong></p>
+<ul>
+<li>Secret key never exposed to frontend</li>
+<li>Keys expire after 20 minutes</li>
+<li>Origin validation prevents cross-site attacks</li>
+<li>CORS headers properly configured</li>
+</ul>
+<h4><code>/supabase/functions/payvia-process/index.ts</code></h4>
+<p><strong>Purpose:</strong> Process tokenized transactions through Digitzs gateway to Stripe.</p>
+<p><strong>Transaction Processing Flow:</strong></p>
+<ol>
+<li>Receives tokenized card data + customer info + device data</li>
+<li>Validates transaction data completeness</li>
+<li>Routes through Digitzs Merchant ID</li>
+<li>Logs transaction for chargeback defense</li>
+<li>Returns standardized response</li>
+</ol>
+<p><strong>Request Payload:</strong></p>
+<pre><code class="language-typescript">{
+  amount: number;              // In cents (e.g., 3200 = $32.00)
+  currency: string;            // &quot;USD&quot;
+  orderId: string;             // Unique order identifier
+  customerInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  eventInfo: {
+    eventName: string;
+    eventDate: string;
+    eventTime: string;
+  };
+  deviceData: {
+    ipAddress: string;
+    userAgent: string;
+    browserLanguage: string;
+    screenResolution: string;
+    timezone: string;
+  };
+  tokenexToken: string;        // Tokenized card data
+  merchantId: string;          // Digitzs MID
+  processor: string;           // &quot;stripe&quot;
+  gatewayType: string;         // &quot;transparent&quot;
+}
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-typescript">{
+  success: boolean;
+  transactionId: string;       // Gateway transaction ID
+  orderId: string;
+  amount: number;
+  status: string;              // &quot;approved&quot;, &quot;declined&quot;, &quot;error&quot;
+  processor: string;
+  merchantId: string;
+  gateway: string;
+  timestamp: string;
+  details: {
+    customerName: string;
+    email: string;
+    eventName: string;
+    deviceFingerprint: object;
+  };
+}
+</code></pre>
+<h3>3. TicketSocket Integration</h3>
+<h4><code>/supabase/functions/ticketsocket/index.ts</code></h4>
+<p><strong>Purpose:</strong> Integrate with TicketSocket API v2 for event management and order tracking.</p>
+<p><strong>API Endpoints:</strong></p>
+<p><strong>1. Create Order</strong></p>
+<pre><code>POST /functions/v1/ticketsocket
+</code></pre>
+<p>Payload:</p>
+<pre><code class="language-json">{
+  &quot;merchant_id&quot;: &quot;ticketso-clevergroup-33595002-4398786-1724692895&quot;,
+  &quot;customer&quot;: {
+    &quot;first_name&quot;: &quot;John&quot;,
+    &quot;last_name&quot;: &quot;Doe&quot;,
+    &quot;email&quot;: &quot;john@example.com&quot;,
+    &quot;phone&quot;: &quot;+1234567890&quot;
+  },
+  &quot;items&quot;: [{
+    &quot;event_id&quot;: &quot;event-123&quot;,
+    &quot;quantity&quot;: 2
+  }]
+}
+</code></pre>
+<p><strong>2. Get Events</strong></p>
+<pre><code>GET /functions/v1/ticketsocket/events
+GET /functions/v1/ticketsocket/events?id=event-123
+</code></pre>
+<p><strong>3. Get Order Status</strong></p>
+<pre><code>GET /functions/v1/ticketsocket/order-status?order_id=order-123
+</code></pre>
+<p><strong>Authentication:</strong></p>
+<ul>
+<li>Username/password authentication with TicketSocket API</li>
+<li>Auto-obtains access token for each request</li>
+<li>Token stored temporarily in Edge Function memory</li>
+</ul>
+<p><strong>Database Integration:</strong></p>
+<ul>
+<li><code>registrations</code> table tracks orders</li>
+<li>Stores <code>ticketsocket_order_id</code> for lookups</li>
+<li>Maintains <code>order_status</code> (pending, completed, failed, refunded)</li>
+</ul>
+<hr>
+<h2>Transaction Flow</h2>
+<h3>Detailed Step-by-Step Process</h3>
+<h4>Phase 1: Checkout Initialization (Frontend)</h4>
+<ol>
+<li>User clicks &quot;Get Tickets&quot; button</li>
+<li><code>PayviaCheckout</code> component mounts</li>
+<li>Component requests TokenEx authentication key from Edge Function</li>
+<li>Edge Function generates HMAC authentication key with 20-minute expiration</li>
+<li>Frontend receives auth key and initializes TokenEx iframe</li>
+<li>TokenEx iframe loads secure card input fields</li>
+</ol>
+<h4>Phase 2: Customer Data Entry</h4>
+<ol start="7">
+<li>User enters customer information:<ul>
+<li>First Name</li>
+<li>Last Name</li>
+<li>Email Address</li>
+<li>Phone Number</li>
+<li>Ticket Quantity</li>
+</ul>
+</li>
+<li>User enters card details in TokenEx iframe:<ul>
+<li>Card Number (16 digits, formatted with spaces)</li>
+<li>CVV (3-4 digits)</li>
+</ul>
+</li>
+<li>Frontend collects device fingerprinting data:<ul>
+<li>User Agent</li>
+<li>Screen Resolution</li>
+<li>Browser Language</li>
+<li>Timezone</li>
+<li>IP Address (captured by Edge Function)</li>
+</ul>
+</li>
+</ol>
+<h4>Phase 3: Tokenization (PCI Boundary)</h4>
+<ol start="10">
+<li>User clicks &quot;Complete Purchase&quot; button</li>
+<li>Frontend calls <code>tokenex.tokenize()</code> method</li>
+<li>TokenEx performs triple-hash encryption at device level</li>
+<li>Encrypted card data sent directly to TokenEx servers (never touches our infrastructure)</li>
+<li>TokenEx returns secure token (e.g., <code>6747114507881848</code>)</li>
+</ol>
+<h4>Phase 4: Transaction Processing</h4>
+<ol start="15">
+<li>Frontend bundles transaction data:<ul>
+<li>TokenEx token</li>
+<li>Customer info</li>
+<li>Event details</li>
+<li>Device data</li>
+<li>Order ID (generated client-side: <code>EFD-{timestamp}-{random}</code>)</li>
+</ul>
+</li>
+<li>POST to <code>/functions/v1/payvia-process</code> Edge Function</li>
+<li>Edge Function validates all required fields</li>
+<li>Edge Function routes transaction through Digitzs gateway:<ul>
+<li>Merchant ID: <code>digitzs-escapefrom-33738480-5013250-1771270463</code></li>
+<li>Processor: Stripe</li>
+<li>Gateway Type: Transparent</li>
+</ul>
+</li>
+<li>Digitzs routes to ProPay MID: <code>33738480-5013250-1771270463</code></li>
+<li>ProPay processes through Stripe</li>
+</ol>
+<h4>Phase 5: Response Handling</h4>
+<ol start="21">
+<li>Stripe approves/declines transaction</li>
+<li>Response flows back through ProPay → Digitzs → Edge Function</li>
+<li>Edge Function logs transaction details for chargeback defense</li>
+<li>Edge Function returns standardized response to frontend</li>
+<li>Frontend displays success/error message to user</li>
+</ol>
+<h4>Phase 6: TicketSocket Order Creation</h4>
+<ol start="26">
+<li>On successful payment, frontend calls TicketSocket Edge Function</li>
+<li>Edge Function authenticates with TicketSocket API v2</li>
+<li>Creates order with merchant ID and customer details</li>
+<li>TicketSocket sees Stripe transaction in their dashboard</li>
+<li>Order saved to Supabase <code>registrations</code> table with <code>ticketsocket_order_id</code></li>
+<li>User receives confirmation email (sent by TicketSocket)</li>
+</ol>
+<hr>
+<h2>Merchant Configuration</h2>
+<h3>Digitzs Gateway</h3>
+<ul>
+<li><strong>Merchant ID</strong>: <code>digitzs-escapefrom-33738480-5013250-1771270463</code></li>
+<li><strong>ProPay MID Wrapped</strong>: <code>33738480-5013250-1771270463</code></li>
+<li><strong>Processor</strong>: Stripe</li>
+<li><strong>Gateway Type</strong>: Transparent</li>
+<li><strong>Card Support</strong>: Visa, Mastercard, Amex, Discover</li>
+<li><strong>Pricing</strong>: 2.99% + $0.30 per transaction (all card types)</li>
+<li><strong>Monthly Fee</strong>: $29</li>
+</ul>
+<h3>TokenEx Configuration</h3>
+<ul>
+<li><strong>TokenEx ID</strong>: <code>7320744805319527</code></li>
+<li><strong>Token Scheme</strong>: <code>sixTOKENfour</code> (6 first digits + TOKEN + 4 last digits)</li>
+<li><strong>Encryption</strong>: Triple-hash at device level</li>
+<li><strong>Authentication</strong>: HMAC-SHA256 with 20-minute expiration</li>
+<li><strong>PCI Compliance</strong>: Level 1 Service Provider</li>
+</ul>
+<h3>TicketSocket Configuration</h3>
+<ul>
+<li><strong>Merchant ID</strong>: <code>ticketso-clevergroup-33595002-4398786-1724692895</code></li>
+<li><strong>API Version</strong>: v2</li>
+<li><strong>API URL</strong>: <code>https://clevergroup.tscheckout.com/api/v2</code></li>
+<li><strong>Admin Portal</strong>: <code>https://clevergroup.tscheckout.com/admin/</code></li>
+<li><strong>Authentication</strong>: Username/Password (OAuth token)</li>
+<li><strong>Username</strong>: <code>Laura@digitzs.com</code></li>
+</ul>
+<h3>Environment Variables</h3>
+<p><strong>Required Supabase Edge Function Secrets:</strong></p>
+<pre><code class="language-bash"># TokenEx Configuration
+TOKENEX_ID=7320744805319527
+TOKENEX_API_KEY=&lt;client-secret-key&gt;
+
+# Digitzs Gateway
+DIGITZS_MERCHANT_ID=digitzs-escapefrom-33738480-5013250-1771270463
+DIGITZS_API_KEY=&lt;api-key&gt;
+DIGITZS_APP_KEY=&lt;app-key&gt;
+
+# TicketSocket API v2
+TICKETSOCKET_API_URL=https://clevergroup.tscheckout.com/api/v2
+TICKETSOCKET_MERCHANT_ID=ticketso-clevergroup-33595002-4398786-1724692895
+TICKETSOCKET_USERNAME=Laura@digitzs.com
+TICKETSOCKET_PASSWORD=&lt;password&gt;
+</code></pre>
+<p><strong>Frontend Environment Variables (.env):</strong></p>
+<pre><code class="language-bash">VITE_SUPABASE_URL=&lt;your-supabase-project-url&gt;
+VITE_SUPABASE_ANON_KEY=&lt;your-supabase-anon-key&gt;
+</code></pre>
+<hr>
+<h2>Security &amp; Compliance</h2>
+<h3>PCI DSS 4.0 Compliance</h3>
+<p><strong>TokenEx PCI Scope:</strong></p>
+<ul>
+<li>Card data tokenized at device level (triple-hash encryption)</li>
+<li>Card data never touches application servers</li>
+<li>Reduces PCI scope to SAQ-A (simplest questionnaire)</li>
+<li>TokenEx is Level 1 PCI certified service provider</li>
+</ul>
+<p><strong>Data Flow Security:</strong></p>
+<pre><code>User Browser (PCI Scope) → TokenEx Servers (PCI Compliant) → Application (Out of Scope)
+</code></pre>
+<p><strong>What We Store:</strong></p>
+<ul>
+<li>Tokenized card reference (not reversible to card number)</li>
+<li>Customer name, email, phone</li>
+<li>Transaction amount and order details</li>
+<li>Device fingerprint data</li>
+<li>Event information</li>
+</ul>
+<p><strong>What We NEVER Store:</strong></p>
+<ul>
+<li>Full card numbers</li>
+<li>CVV codes</li>
+<li>Card expiration dates</li>
+<li>Cardholder authentication data</li>
+</ul>
+<h3>Fraud Prevention</h3>
+<p><strong>Device Fingerprinting:</strong></p>
+<ul>
+<li>User Agent string</li>
+<li>Screen resolution</li>
+<li>Browser language</li>
+<li>Timezone</li>
+<li>IP address (captured server-side)</li>
+<li>Browser canvas fingerprint (optional)</li>
+</ul>
+<p><strong>Transaction Velocity Checks:</strong></p>
+<ul>
+<li>Multiple transactions from same IP</li>
+<li>Multiple transactions with same email</li>
+<li>Rapid-fire transaction attempts</li>
+<li>Unusual device characteristics</li>
+</ul>
+<p><strong>3D Secure Support:</strong></p>
+<ul>
+<li>Available through Stripe processor</li>
+<li>Can be enabled for high-risk transactions</li>
+<li>Liability shift to card issuer</li>
+</ul>
+<h3>Chargeback Defense</h3>
+<p><strong>Data Collected for Every Transaction:</strong></p>
+<ol>
+<li><p><strong>Customer Identity</strong></p>
+<ul>
+<li>Full name</li>
+<li>Email address</li>
+<li>Phone number</li>
+<li>IP address</li>
+</ul>
+</li>
+<li><p><strong>Device Data</strong></p>
+<ul>
+<li>User agent</li>
+<li>Screen resolution</li>
+<li>Browser language</li>
+<li>Timezone</li>
+<li>Operating system</li>
+</ul>
+</li>
+<li><p><strong>Transaction Details</strong></p>
+<ul>
+<li>Event name</li>
+<li>Event date/time</li>
+<li>Ticket quantity</li>
+<li>Total amount</li>
+<li>Order ID</li>
+<li>Transaction timestamp</li>
+</ul>
+</li>
+<li><p><strong>Payment Data</strong></p>
+<ul>
+<li>TokenEx token reference</li>
+<li>Gateway transaction ID</li>
+<li>Processor response</li>
+<li>Authorization code</li>
+</ul>
+</li>
+</ol>
+<p><strong>Chargeback Process:</strong></p>
+<ul>
+<li>MyValet/Digitzs handles chargeback notifications ($29 fee)</li>
+<li>Optional chargeback management service ($29 fee)</li>
+<li>Auto-submission to card networks ($58 fee, best win rate)</li>
+<li>All transaction data automatically provided as evidence</li>
+</ul>
+<hr>
+<h2>Implementation Guide</h2>
+<h3>Step 1: Frontend Setup</h3>
+<h4>Install Dependencies</h4>
+<pre><code class="language-bash">npm install @supabase/supabase-js lucide-react
+</code></pre>
+<h4>Add TokenEx SDK to HTML</h4>
+<pre><code class="language-html">&lt;!-- /index.html --&gt;
+&lt;script src=&quot;https://htp.tokenex.com/iframe/v3/iframe-v3.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h4>Create Payvia Service</h4>
+<pre><code class="language-typescript">// /src/services/payvia.ts
+import { supabase } from &#39;./supabase&#39;;
+
+const DIGITZS_MID = &#39;digitzs-escapefrom-33738480-5013250-1771270463&#39;;
+
+async function getTokenexAuthKey(): Promise&lt;TokenexAuthResponse&gt; {
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tokenex-auth`,
+    {
+      method: &#39;POST&#39;,
+      headers: {
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;Authorization&#39;: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        origin: window.location.origin,
+        tokenScheme: &#39;sixTOKENfour&#39;,
+      }),
+    }
+  );
+
+  return await response.json();
+}
+
+export async function initializeTokenex(containerIds: {
+  card: string;
+  cvv: string
+}) {
+  const authResponse = await getTokenexAuthKey();
+
+  if (!authResponse.success) {
+    throw new Error(&#39;Failed to get TokenEx auth key&#39;);
+  }
+
+  const TokenEx = (window as any).TokenEx;
+
+  const iframe = new TokenEx.Iframe(containerIds.card, {
+    tokenExID: authResponse.tokenExID,
+    tokenScheme: authResponse.tokenScheme,
+    authenticationKey: authResponse.authenticationKey,
+    timestamp: authResponse.timestamp,
+    origin: window.location.origin,
+    pci: true,
+    cvv: true,
+    cvvContainerID: containerIds.cvv,
+    enableValidateOnBlur: true,
+    enablePrettyFormat: true,
+    placeholder: &#39;1234 5678 9012 3456&#39;,
+    cvvPlaceholder: &#39;123&#39;,
+    styles: {
+      base: &#39;padding: 12px; font-size: 16px; color: #333;&#39;,
+    },
+  });
+
+  iframe.load();
+  return iframe;
+}
+
+export async function processPayviaTransaction(
+  transactionData: TransactionData,
+  tokenexToken: string
+): Promise&lt;PayviaResponse&gt; {
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payvia-process`,
+    {
+      method: &#39;POST&#39;,
+      headers: {
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;Authorization&#39;: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        ...transactionData,
+        tokenexToken,
+        merchantId: DIGITZS_MID,
+        processor: &#39;stripe&#39;,
+        gatewayType: &#39;transparent&#39;,
+      }),
+    }
+  );
+
+  return await response.json();
+}
+</code></pre>
+<h4>Create Checkout Component</h4>
+<pre><code class="language-typescript">// /src/components/PayviaCheckout.tsx
+import { useState, useEffect } from &#39;react&#39;;
+import { initializeTokenex, processPayviaTransaction } from &#39;../services/payvia&#39;;
+
+export function PayviaCheckout({ eventData }) {
+  const [tokenexIframe, setTokenexIframe] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() =&gt; {
+    const loadTokenex = async () =&gt; {
+      const iframe = await initializeTokenex({
+        card: &#39;tokenex-card-container&#39;,
+        cvv: &#39;tokenex-cvv-container&#39;,
+      });
+      setTokenexIframe(iframe);
+    };
+
+    loadTokenex();
+  }, []);
+
+  const handleSubmit = async (formData) =&gt; {
+    setLoading(true);
+
+    // Get tokenized card data
+    const token = await new Promise((resolve) =&gt; {
+      tokenexIframe.tokenize();
+      tokenexIframe.on(&#39;tokenize&#39;, (data) =&gt; resolve(data.token));
+    });
+
+    // Process transaction
+    const result = await processPayviaTransaction(
+      {
+        amount: eventData.price * 100, // Convert to cents
+        currency: &#39;USD&#39;,
+        orderId: `EFD-${Date.now()}`,
+        customerInfo: formData,
+        eventInfo: eventData,
+        deviceData: collectDeviceData(),
+      },
+      token
+    );
+
+    if (result.success) {
+      // Create TicketSocket order
+      await createTicketSocketOrder(result);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      {/* Customer info fields */}
+
+      &lt;div id=&quot;tokenex-card-container&quot; /&gt;
+      &lt;div id=&quot;tokenex-cvv-container&quot; /&gt;
+
+      &lt;button type=&quot;submit&quot; disabled={loading}&gt;
+        {loading ? &#39;Processing...&#39; : &#39;Complete Purchase&#39;}
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+<h3>Step 2: Backend Edge Functions</h3>
+<h4>Deploy TokenEx Auth Function</h4>
+<pre><code class="language-bash"># The function is already created at:
+# /supabase/functions/tokenex-auth/index.ts
+
+# Set environment variables in Supabase Dashboard:
+# Settings → Edge Functions → Secrets
+
+TOKENEX_ID=7320744805319527
+TOKENEX_API_KEY=&lt;your-client-secret-key&gt;
+</code></pre>
+<h4>Deploy Payvia Process Function</h4>
+<pre><code class="language-bash"># The function is already created at:
+# /supabase/functions/payvia-process/index.ts
+
+# Set environment variables:
+DIGITZS_MERCHANT_ID=digitzs-escapefrom-33738480-5013250-1771270463
+DIGITZS_API_KEY=&lt;your-api-key&gt;
+DIGITZS_APP_KEY=&lt;your-app-key&gt;
+</code></pre>
+<h4>Deploy TicketSocket Function</h4>
+<pre><code class="language-bash"># The function is already created at:
+# /supabase/functions/ticketsocket/index.ts
+
+# Set environment variables:
+TICKETSOCKET_API_URL=https://clevergroup.tscheckout.com/api/v2
+TICKETSOCKET_MERCHANT_ID=ticketso-clevergroup-33595002-4398786-1724692895
+TICKETSOCKET_USERNAME=Laura@digitzs.com
+TICKETSOCKET_PASSWORD=&lt;your-password&gt;
+</code></pre>
+<h3>Step 3: Database Setup</h3>
+<h4>Create Registrations Table</h4>
+<pre><code class="language-sql">-- /supabase/migrations/create_registrations.sql
+
+CREATE TABLE IF NOT EXISTS events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  description text,
+  event_date date NOT NULL,
+  event_time time NOT NULL,
+  price integer NOT NULL,
+  ticketsocket_event_id text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS registrations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id uuid REFERENCES events(id),
+  first_name text NOT NULL,
+  last_name text NOT NULL,
+  email text NOT NULL,
+  phone text,
+  ticket_quantity integer NOT NULL DEFAULT 1,
+  total_amount integer NOT NULL,
+  order_status text NOT NULL DEFAULT &#39;pending&#39;,
+  ticketsocket_order_id text,
+  payvia_transaction_id text,
+  device_data jsonb,
+  created_at timestamptz DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
+
+-- Create policies
+CREATE POLICY &quot;Anyone can view events&quot;
+  ON events FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+CREATE POLICY &quot;Authenticated users can create registrations&quot;
+  ON registrations FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY &quot;Users can view own registrations&quot;
+  ON registrations FOR SELECT
+  TO authenticated
+  USING (auth.uid() = id);
+
+-- Create indexes
+CREATE INDEX idx_registrations_email ON registrations(email);
+CREATE INDEX idx_registrations_ticketsocket_order_id ON registrations(ticketsocket_order_id);
+CREATE INDEX idx_registrations_payvia_transaction_id ON registrations(payvia_transaction_id);
+</code></pre>
+<hr>
+<h2>Testing</h2>
+<h3>Test Card Numbers</h3>
+<p><strong>Stripe Test Cards:</strong></p>
+<pre><code>Successful Payment:
+4242 4242 4242 4242 (Visa)
+5555 5555 5555 4444 (Mastercard)
+3782 822463 10005 (American Express)
+
+Declined:
+4000 0000 0000 0002 (Declined)
+
+Requires Authentication:
+4000 0025 0000 3155 (3D Secure)
+
+CVV: Any 3 digits (123)
+Expiration: Any future date (12/25)
+ZIP: Any 5 digits (12345)
+</code></pre>
+<h3>Testing Checklist</h3>
+<h4>1. Frontend Integration</h4>
+<ul>
+<li><input disabled="" type="checkbox"> TokenEx iframe loads correctly</li>
+<li><input disabled="" type="checkbox"> Card input accepts test cards</li>
+<li><input disabled="" type="checkbox"> CVV field works properly</li>
+<li><input disabled="" type="checkbox"> Form validation works</li>
+<li><input disabled="" type="checkbox"> Device data collection works</li>
+<li><input disabled="" type="checkbox"> Error messages display correctly</li>
+</ul>
+<h4>2. Authentication</h4>
+<ul>
+<li><input disabled="" type="checkbox"> TokenEx auth key generated successfully</li>
+<li><input disabled="" type="checkbox"> Authentication key expires after 20 minutes</li>
+<li><input disabled="" type="checkbox"> HMAC signature is valid</li>
+<li><input disabled="" type="checkbox"> Timestamp format is correct</li>
+</ul>
+<h4>3. Transaction Processing</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Token generated for test card</li>
+<li><input disabled="" type="checkbox"> Transaction data sent to edge function</li>
+<li><input disabled="" type="checkbox"> Edge function receives complete payload</li>
+<li><input disabled="" type="checkbox"> Gateway routing configured correctly</li>
+<li><input disabled="" type="checkbox"> Response returned to frontend</li>
+</ul>
+<h4>4. TicketSocket Integration</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Order created in TicketSocket</li>
+<li><input disabled="" type="checkbox"> Order ID stored in database</li>
+<li><input disabled="" type="checkbox"> Order status updated correctly</li>
+<li><input disabled="" type="checkbox"> Webhook received from Stripe</li>
+</ul>
+<h4>5. Database</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Registration record created</li>
+<li><input disabled="" type="checkbox"> All fields populated correctly</li>
+<li><input disabled="" type="checkbox"> RLS policies enforced</li>
+<li><input disabled="" type="checkbox"> Indexes created</li>
+</ul>
+<h3>Test Transaction Flow</h3>
+<pre><code class="language-bash"># 1. Start local development
+npm run dev
+
+# 2. Navigate to checkout page
+# http://localhost:5173
+
+# 3. Fill in customer info:
+First Name: Test
+Last Name: User
+Email: test@example.com
+Phone: 555-0123
+Quantity: 1
+
+# 4. Enter test card:
+Card: 4242 4242 4242 4242
+CVV: 123
+Exp: 12/25
+ZIP: 12345
+
+# 5. Submit payment
+
+# 6. Check console logs for:
+- TokenEx auth response
+- Tokenization success
+- Transaction ID
+- TicketSocket order ID
+
+# 7. Verify in Supabase:
+SELECT * FROM registrations ORDER BY created_at DESC LIMIT 1;
+
+# 8. Check TicketSocket admin portal:
+# https://clevergroup.tscheckout.com/admin/orders
+</code></pre>
+<hr>
+<h2>Production Deployment</h2>
+<h3>Pre-Deployment Checklist</h3>
+<h4>1. Credentials</h4>
+<ul>
+<li><input disabled="" type="checkbox"> TokenEx Client Secret Key configured</li>
+<li><input disabled="" type="checkbox"> Digitzs API credentials configured</li>
+<li><input disabled="" type="checkbox"> TicketSocket credentials configured</li>
+<li><input disabled="" type="checkbox"> Supabase environment variables set</li>
+<li><input disabled="" type="checkbox"> All secrets stored securely (not in code)</li>
+</ul>
+<h4>2. Security</h4>
+<ul>
+<li><input disabled="" type="checkbox"> HTTPS enabled on production domain</li>
+<li><input disabled="" type="checkbox"> CORS headers properly configured</li>
+<li><input disabled="" type="checkbox"> RLS policies enabled on all tables</li>
+<li><input disabled="" type="checkbox"> API keys not exposed in frontend code</li>
+<li><input disabled="" type="checkbox"> Authentication keys expire after 20 minutes</li>
+</ul>
+<h4>3. Edge Functions</h4>
+<ul>
+<li><input disabled="" type="checkbox"> All edge functions deployed</li>
+<li><input disabled="" type="checkbox"> Edge function secrets configured</li>
+<li><input disabled="" type="checkbox"> Edge function logs enabled</li>
+<li><input disabled="" type="checkbox"> Error handling implemented</li>
+<li><input disabled="" type="checkbox"> Rate limiting configured</li>
+</ul>
+<h4>4. Database</h4>
+<ul>
+<li><input disabled="" type="checkbox"> All migrations applied</li>
+<li><input disabled="" type="checkbox"> Indexes created</li>
+<li><input disabled="" type="checkbox"> RLS policies tested</li>
+<li><input disabled="" type="checkbox"> Backup strategy in place</li>
+</ul>
+<h4>5. Frontend</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Environment variables set</li>
+<li><input disabled="" type="checkbox"> TokenEx SDK loaded from CDN</li>
+<li><input disabled="" type="checkbox"> Error handling implemented</li>
+<li><input disabled="" type="checkbox"> Loading states functional</li>
+<li><input disabled="" type="checkbox"> Success/error messages clear</li>
+</ul>
+<h3>Deployment Steps</h3>
+<h4>1. Deploy Database Migrations</h4>
+<pre><code class="language-bash"># Apply migrations to production
+# Via Supabase Dashboard → SQL Editor
+# Or via CLI (if configured)
+</code></pre>
+<h4>2. Configure Edge Function Secrets</h4>
+<pre><code class="language-bash"># Via Supabase Dashboard → Edge Functions → Secrets
+
+# TokenEx
+TOKENEX_ID=7320744805319527
+TOKENEX_API_KEY=&lt;production-secret-key&gt;
+
+# Digitzs
+DIGITZS_MERCHANT_ID=digitzs-escapefrom-33738480-5013250-1771270463
+DIGITZS_API_KEY=&lt;production-api-key&gt;
+DIGITZS_APP_KEY=&lt;production-app-key&gt;
+
+# TicketSocket
+TICKETSOCKET_API_URL=https://clevergroup.tscheckout.com/api/v2
+TICKETSOCKET_MERCHANT_ID=ticketso-clevergroup-33595002-4398786-1724692895
+TICKETSOCKET_USERNAME=Laura@digitzs.com
+TICKETSOCKET_PASSWORD=&lt;production-password&gt;
+</code></pre>
+<h4>3. Deploy Frontend</h4>
+<pre><code class="language-bash"># Build production bundle
+npm run build
+
+# Deploy to hosting platform
+# (Netlify, Vercel, etc.)
+
+# Set environment variables:
+VITE_SUPABASE_URL=&lt;production-supabase-url&gt;
+VITE_SUPABASE_ANON_KEY=&lt;production-anon-key&gt;
+</code></pre>
+<h4>4. Test Production Flow</h4>
+<pre><code class="language-bash"># Run a $1 parking pass test transaction
+# Using real card (will actually charge)
+
+# Verify:
+1. Transaction appears in Stripe dashboard
+2. Order created in TicketSocket
+3. Registration saved to database
+4. Confirmation email sent
+</code></pre>
+<h4>5. Monitor Production</h4>
+<pre><code class="language-bash"># Check Edge Function logs
+# Supabase Dashboard → Edge Functions → Logs
+
+# Monitor for:
+- Authentication errors
+- Transaction failures
+- Gateway timeouts
+- Database errors
+</code></pre>
+<h3>Post-Deployment</h3>
+<h4>Enable Monitoring</h4>
+<ul>
+<li>Set up error tracking (Sentry, LogRocket)</li>
+<li>Configure uptime monitoring</li>
+<li>Enable transaction alerts</li>
+<li>Set up chargeback notifications</li>
+</ul>
+<h4>Documentation</h4>
+<ul>
+<li>Update internal documentation</li>
+<li>Train support staff on troubleshooting</li>
+<li>Document common error messages</li>
+<li>Create runbooks for incidents</li>
+</ul>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Common Issues</h3>
+<h4>1. TokenEx Iframe Not Loading</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>Empty card input container</li>
+<li>Console error: &quot;TokenEx is not defined&quot;</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-javascript">// Verify TokenEx SDK loaded
+console.log(&#39;TokenEx available:&#39;, typeof window.TokenEx !== &#39;undefined&#39;);
+
+// Check script tag in index.html
+&lt;script src=&quot;https://htp.tokenex.com/iframe/v3/iframe-v3.min.js&quot;&gt;&lt;/script&gt;
+
+// Wait for SDK to load
+window.addEventListener(&#39;load&#39;, () =&gt; {
+  initializeTokenex();
+});
+</code></pre>
+<h4>2. Authentication Key Generation Fails</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>&quot;Failed to get TokenEx auth key&quot; error</li>
+<li>500 status from tokenex-auth endpoint</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-bash"># Check environment variables are set
+# Supabase Dashboard → Edge Functions → Secrets
+
+# Verify TOKENEX_API_KEY is correct
+# Should be 32+ character alphanumeric string
+
+# Check edge function logs
+# Look for HMAC generation errors
+
+# Test HMAC generation manually
+# Use online HMAC-SHA256 tool to verify
+</code></pre>
+<h4>3. Transaction Processing Fails</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>&quot;Transaction processing failed&quot; error</li>
+<li>Payment doesn&#39;t complete</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-javascript">// Check transaction data completeness
+console.log(&#39;Transaction data:&#39;, transactionData);
+
+// Verify all required fields present:
+// - amount (number, in cents)
+// - currency (string, &quot;USD&quot;)
+// - orderId (string, unique)
+// - customerInfo (object with all fields)
+// - eventInfo (object with all fields)
+// - deviceData (object with all fields)
+// - tokenexToken (string from TokenEx)
+
+// Check edge function logs for specific error
+</code></pre>
+<h4>4. TicketSocket Order Not Created</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>Payment succeeds but no TicketSocket order</li>
+<li>Missing ticketsocket_order_id in database</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-bash"># Verify TicketSocket credentials
+# Test authentication manually:
+
+curl -X POST https://clevergroup.tscheckout.com/api/v2/auth/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;username&quot;:&quot;Laura@digitzs.com&quot;,&quot;password&quot;:&quot;&lt;password&gt;&quot;}&#39;
+
+# Check event ID exists in TicketSocket
+# Verify merchant ID is correct
+
+# Check edge function logs for API errors
+</code></pre>
+<h4>5. CORS Errors</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>&quot;No &#39;Access-Control-Allow-Origin&#39; header&quot; error</li>
+<li>Requests blocked by browser</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-typescript">// Verify CORS headers in edge functions
+const corsHeaders = {
+  &quot;Access-Control-Allow-Origin&quot;: &quot;*&quot;,
+  &quot;Access-Control-Allow-Methods&quot;: &quot;GET, POST, OPTIONS&quot;,
+  &quot;Access-Control-Allow-Headers&quot;: &quot;Content-Type, Authorization, X-Client-Info, Apikey&quot;,
+};
+
+// Handle OPTIONS preflight
+if (req.method === &quot;OPTIONS&quot;) {
+  return new Response(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
+// Include CORS headers in all responses
+return new Response(JSON.stringify(data), {
+  headers: {
+    ...corsHeaders,
+    &quot;Content-Type&quot;: &quot;application/json&quot;,
+  },
+});
+</code></pre>
+<h4>6. RLS Policy Blocks Insert</h4>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>&quot;Permission denied&quot; when creating registration</li>
+<li>403 error from Supabase</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<pre><code class="language-sql">-- Check RLS policies
+SELECT * FROM pg_policies WHERE tablename = &#39;registrations&#39;;
+
+-- Temporarily disable RLS for testing
+ALTER TABLE registrations DISABLE ROW LEVEL SECURITY;
+
+-- Fix policy to allow inserts
+CREATE POLICY &quot;Allow public registrations&quot;
+  ON registrations FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+</code></pre>
+<h3>Debugging Tools</h3>
+<h4>Edge Function Logs</h4>
+<pre><code class="language-bash"># View real-time logs
+# Supabase Dashboard → Edge Functions → Select Function → Logs
+
+# Filter by error level
+# Look for stack traces
+# Check request/response payloads
+</code></pre>
+<h4>Browser DevTools</h4>
+<pre><code class="language-javascript">// Enable verbose logging
+localStorage.setItem(&#39;DEBUG&#39;, &#39;payvia:*&#39;);
+
+// Log TokenEx events
+iframe.on(&#39;load&#39;, () =&gt; console.log(&#39;TokenEx loaded&#39;));
+iframe.on(&#39;tokenize&#39;, (data) =&gt; console.log(&#39;Token:&#39;, data));
+iframe.on(&#39;error&#39;, (error) =&gt; console.error(&#39;TokenEx error:&#39;, error));
+iframe.on(&#39;validate&#39;, (data) =&gt; console.log(&#39;Validation:&#39;, data));
+</code></pre>
+<h4>Database Queries</h4>
+<pre><code class="language-sql">-- Check recent registrations
+SELECT * FROM registrations
+ORDER BY created_at DESC
+LIMIT 10;
+
+-- Find failed transactions
+SELECT * FROM registrations
+WHERE order_status = &#39;failed&#39;
+ORDER BY created_at DESC;
+
+-- Check specific order
+SELECT * FROM registrations
+WHERE ticketsocket_order_id = &#39;order-id&#39;;
+</code></pre>
+<h3>Support Contacts</h3>
+<p><strong>TokenEx Support:</strong></p>
+<ul>
+<li>Email: <a href="mailto:support@tokenex.com">support@tokenex.com</a></li>
+<li>Phone: 1-800-836-3710</li>
+<li>Documentation: <a href="https://docs.tokenex.com">https://docs.tokenex.com</a></li>
+</ul>
+<p><strong>Digitzs/MyValet Support:</strong></p>
+<ul>
+<li>Email: <a href="mailto:support@digitzs.com">support@digitzs.com</a></li>
+<li>Phone: 1-888-123-4567</li>
+<li>Portal: <a href="https://portal.digitzs.com">https://portal.digitzs.com</a></li>
+</ul>
+<p><strong>TicketSocket Support:</strong></p>
+<ul>
+<li>Email: <a href="mailto:support@ticketsocket.com">support@ticketsocket.com</a></li>
+<li>Admin Portal: <a href="https://clevergroup.tscheckout.com/admin/">https://clevergroup.tscheckout.com/admin/</a></li>
+</ul>
+<p><strong>Supabase Support:</strong></p>
+<ul>
+<li>Documentation: <a href="https://supabase.com/docs">https://supabase.com/docs</a></li>
+<li>Community: <a href="https://github.com/supabase/supabase/discussions">https://github.com/supabase/supabase/discussions</a></li>
+<li>Support: <a href="mailto:support@supabase.io">support@supabase.io</a></li>
+</ul>
+<hr>
+<h2>Additional Resources</h2>
+<h3>API Documentation</h3>
+<ul>
+<li><strong>TokenEx API</strong>: <a href="https://docs.tokenex.com/docs/authentication">https://docs.tokenex.com/docs/authentication</a></li>
+<li><strong>Digitzs API</strong>: <a href="https://digitzs.com/developers">https://digitzs.com/developers</a></li>
+<li><strong>TicketSocket API v2</strong>: <a href="https://clevergroup.tscheckout.com/api/v2/docs">https://clevergroup.tscheckout.com/api/v2/docs</a></li>
+<li><strong>Stripe API</strong>: <a href="https://stripe.com/docs/api">https://stripe.com/docs/api</a></li>
+</ul>
+<h3>Compliance &amp; Security</h3>
+<ul>
+<li><strong>PCI DSS Requirements</strong>: <a href="https://www.pcisecuritystandards.org">https://www.pcisecuritystandards.org</a></li>
+<li><strong>TokenEx Compliance</strong>: <a href="https://tokenex.com/compliance">https://tokenex.com/compliance</a></li>
+<li><strong>OWASP Top 10</strong>: <a href="https://owasp.org/www-project-top-ten">https://owasp.org/www-project-top-ten</a></li>
+</ul>
+<h3>Related Documentation Files</h3>
+<ul>
+<li><code>PAYVIA_INTEGRATION.md</code> - Overview and benefits</li>
+<li><code>TOKENEX_SETUP.md</code> - TokenEx credentials guide</li>
+<li><code>TICKETSOCKET_SETUP.md</code> - TicketSocket integration details</li>
+<li><code>DEPLOYMENT.md</code> - Deployment guide</li>
+</ul>
+<hr>
+<h2>Appendix</h2>
+<h3>Pricing Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Visa/MC Rate</th>
+<th>AMEX Rate</th>
+<th>Monthly Fee</th>
+<th>Chargeback Fee</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Digitzs/Payvia</strong></td>
+<td>2.99% + $0.30</td>
+<td>2.99% + $0.30</td>
+<td>$29</td>
+<td>$29 notification<br>$29 management<br>$58 dispute</td>
+</tr>
+<tr>
+<td><strong>Stripe</strong></td>
+<td>2.9% + $0.30</td>
+<td>3.5% + $0.30</td>
+<td>$0</td>
+<td>$15 (no management)</td>
+</tr>
+<tr>
+<td><strong>Square</strong></td>
+<td>2.9% + $0.30</td>
+<td>3.5% + $0.30</td>
+<td>$0</td>
+<td>$15 (no management)</td>
+</tr>
+</tbody></table>
+<p><strong>Break-even Analysis:</strong></p>
+<ul>
+<li>For AMEX transactions, Digitzs saves 0.51% per transaction</li>
+<li>Monthly fee: $29</li>
+<li>Break-even: $5,686 AMEX volume per month</li>
+<li>For $32 tickets: 178 AMEX transactions per month</li>
+</ul>
+<h3>Glossary</h3>
+<p><strong>ACH</strong>: Automated Clearing House - Electronic bank-to-bank network</p>
+<p><strong>AMEX</strong>: American Express credit cards</p>
+<p><strong>Chargeback</strong>: Disputed transaction reversed by cardholder&#39;s bank</p>
+<p><strong>CVV</strong>: Card Verification Value - 3-4 digit security code</p>
+<p><strong>Device Fingerprinting</strong>: Collection of device characteristics for fraud detection</p>
+<p><strong>Edge Function</strong>: Serverless function running at the edge (close to users)</p>
+<p><strong>HMAC</strong>: Hash-based Message Authentication Code - Cryptographic signature</p>
+<p><strong>MID</strong>: Merchant ID - Unique identifier for payment processing account</p>
+<p><strong>PCI DSS</strong>: Payment Card Industry Data Security Standard</p>
+<p><strong>ProPay</strong>: Payment gateway and merchant account provider</p>
+<p><strong>RLS</strong>: Row Level Security - Database access control at row level</p>
+<p><strong>SAQ</strong>: Self-Assessment Questionnaire - PCI compliance documentation</p>
+<p><strong>3D Secure</strong>: Additional authentication layer for card payments</p>
+<p><strong>Token</strong>: Secure reference to sensitive data (card number)</p>
+<p><strong>Tokenization</strong>: Process of replacing sensitive data with tokens</p>
+<p><strong>Transparent Gateway</strong>: Gateway that routes to multiple processors</p>
+<hr>
+<p><strong>Document Version</strong>: 1.0
+<strong>Last Updated</strong>: March 22, 2026
+<strong>Author</strong>: Digitzs Integration Team
+<strong>Status</strong>: Production Ready</p>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

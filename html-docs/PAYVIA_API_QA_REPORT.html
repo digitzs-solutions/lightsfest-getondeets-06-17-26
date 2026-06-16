@@ -1,0 +1,475 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAYVIA_API_QA_REPORT</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>PayVia API Documentation QA Report</h1>
+<h2>Executive Summary</h2>
+<p>QA testing conducted on PayVia Mintlify documentation (<a href="https://payvia-65a748ab.mintlify.app/">https://payvia-65a748ab.mintlify.app/</a>)
+Date: March 30, 2026</p>
+<h2>Critical Issues Found</h2>
+<h3>1. <strong>API Endpoint Inconsistencies</strong></h3>
+<p><strong>Issue</strong>: Multiple payment endpoint patterns across documentation</p>
+<ul>
+<li>Backend Integration shows: <code>POST {{baseUrl}}/v4/payments/</code> (with trailing slash)</li>
+<li>Testing Guide shows: <code>POST {{baseUrl}}/v4/payments</code> (without trailing slash)</li>
+<li>API Reference shows: <code>POST /v4/payments</code></li>
+</ul>
+<p><strong>Impact</strong>: High - Developers may encounter 404 errors
+<strong>Recommendation</strong>: Standardize to <code>/v4/payments</code> (no trailing slash) throughout</p>
+<h3>2. <strong>Authentication Flow Gaps</strong></h3>
+<p><strong>Issue</strong>: Token expiration and refresh not documented</p>
+<ul>
+<li>No mention of token TTL (time to live)</li>
+<li>No refresh token mechanism explained</li>
+<li>Error handling example suggests refreshing token but doesn&#39;t show how</li>
+</ul>
+<p><strong>Impact</strong>: Medium - Production apps may fail unexpectedly
+<strong>Recommendation</strong>: Add section on token lifecycle management</p>
+<h3>3. <strong>Payment Method Data Structure Confusion</strong></h3>
+<p><strong>Issue</strong>: Documentation shows conflicting requirements</p>
+<ul>
+<li>Says &quot;You must provide either paymentMethodId OR paymentMethodData&quot;</li>
+<li>But all examples only show paymentMethodData</li>
+<li>No working example of paymentMethodId usage</li>
+</ul>
+<p><strong>Impact</strong>: High - Developers can&#39;t implement stored payment methods
+<strong>Recommendation</strong>: Add complete example of paymentMethodId flow</p>
+<h3>4. <strong>Split Payment Configuration Issues</strong></h3>
+<p><strong>Issue</strong>: Amount units inconsistent</p>
+<ul>
+<li>Main payment uses dollars: <code>&quot;amount&quot;: 1.00</code></li>
+<li>Split config uses cents: <code>&quot;amount&quot;: 750</code> (in cents comment)</li>
+<li>No clear conversion or validation rules</li>
+</ul>
+<p><strong>Impact</strong>: Critical - Could cause incorrect payment amounts
+<strong>Recommendation</strong>: Standardize on one unit (suggest dollars) with clear documentation</p>
+<h3>5. <strong>Webhook Configuration Incomplete</strong></h3>
+<p><strong>Issue</strong>: Setup process not documented</p>
+<ul>
+<li>Shows webhook payload format</li>
+<li>Shows configuration options</li>
+<li>But doesn&#39;t show HOW to register webhooks (API endpoint missing)</li>
+</ul>
+<p><strong>Impact</strong>: Medium - Developers can&#39;t enable webhooks
+<strong>Recommendation</strong>: Add POST /v4/webhooks endpoint documentation</p>
+<h2>Medium Priority Issues</h2>
+<h3>6. <strong>Error Response Format Inconsistency</strong></h3>
+<p><strong>Issue</strong>: Two different error formats shown</p>
+<ul>
+<li>JSON:API format with <code>errors</code> array (Error Handling Guide)</li>
+<li>Simple format with single <code>error</code> object (Testing Guide)</li>
+</ul>
+<p><strong>Impact</strong>: Medium - Error parsing may fail
+<strong>Recommendation</strong>: Use JSON:API format consistently</p>
+<h3>7. <strong>Test Credentials Security</strong></h3>
+<p><strong>Issue</strong>: Sandbox credentials exposed in public docs</p>
+<pre><code>Merchant ID: digitzs-test-718643500-3230807-1732171363
+App Key: HTxKp4jh1cSIprscR81zXt6EtsOup1wNf8HPNLr5vTNWMAUloj0i7yEhVmIxZrck
+API Key: pOZnjKUSBk8pEhBoOAu0qzz6WpfqLxm3YmmZnDy2
+</code></pre>
+<p><strong>Impact</strong>: Low - Sandbox only, but still bad practice
+<strong>Recommendation</strong>: Replace with placeholder variables, provide in developer portal</p>
+<h3>8. <strong>Kount Integration Not Explained</strong></h3>
+<p><strong>Issue</strong>: References to Kount appear but no integration guide</p>
+<ul>
+<li>Frontend passes <code>kountResponse</code> to backend</li>
+<li>No documentation on how to get/generate this</li>
+<li>No explanation of Kount session setup</li>
+</ul>
+<p><strong>Impact</strong>: High - Fraud prevention won&#39;t work correctly
+<strong>Recommendation</strong>: Add Kount integration guide</p>
+<h3>9. <strong>Missing Refund Documentation</strong></h3>
+<p><strong>Issue</strong>: API Reference mentions refund endpoint but no details</p>
+<ul>
+<li>Listed as: <code>POST /v4/payments/{paymentId}/refund</code></li>
+<li>No request/response examples</li>
+<li>No partial refund documentation</li>
+</ul>
+<p><strong>Impact</strong>: Medium - Refund functionality unclear
+<strong>Recommendation</strong>: Add complete refund API documentation</p>
+<h3>10. <strong>ACH Payment Method Undocumented</strong></h3>
+<p><strong>Issue</strong>: UI mentions ACH tab but no ACH payment examples</p>
+<ul>
+<li>Frontend shows <code>achTabLabel</code> styling option</li>
+<li>No ACH token format documented</li>
+<li>No ACH-specific requirements shown</li>
+</ul>
+<p><strong>Impact</strong>: Medium - Can&#39;t implement ACH payments
+<strong>Recommendation</strong>: Add ACH payment method documentation</p>
+<h2>Low Priority Issues</h2>
+<h3>11. <strong>Rate Limiting Values Unclear</strong></h3>
+<p><strong>Issue</strong>: Rate limits mentioned but not specified</p>
+<ul>
+<li>Says &quot;Rate limit of 100 requests per minute exceeded&quot;</li>
+<li>No documentation of actual limits per endpoint</li>
+<li>No guidance on optimal request patterns</li>
+</ul>
+<p><strong>Impact</strong>: Low - Developers may hit limits unknowingly
+<strong>Recommendation</strong>: Document rate limits per endpoint</p>
+<h3>12. <strong>CORS Configuration Not Covered</strong></h3>
+<p><strong>Issue</strong>: Frontend makes cross-origin requests but CORS not addressed</p>
+<ul>
+<li>No mention of allowed origins</li>
+<li>No troubleshooting for CORS errors</li>
+<li>Iframe postMessage security could be clearer</li>
+</ul>
+<p><strong>Impact</strong>: Low - May cause confusion during development
+<strong>Recommendation</strong>: Add CORS configuration section</p>
+<h3>13. <strong>Order Items Schema Validation Unclear</strong></h3>
+<p><strong>Issue</strong>: Order items have mixed required/optional fields</p>
+<ul>
+<li>Documentation shows <code>(required)</code> and <code>(optional)</code> inconsistently</li>
+<li>Type field marked optional but seems required for fraud detection</li>
+<li>No validation error examples</li>
+</ul>
+<p><strong>Impact</strong>: Low - Minor confusion
+<strong>Recommendation</strong>: Clarify required vs optional fields</p>
+<h3>14. <strong>Production Migration Checklist Incomplete</strong></h3>
+<p><strong>Issue</strong>: Checklist exists but lacks detail</p>
+<ul>
+<li>Generic items like &quot;Code Updates&quot; with no specifics</li>
+<li>No environment variable checklist</li>
+<li>No rollback procedure</li>
+</ul>
+<p><strong>Impact</strong>: Low - Could cause production issues
+<strong>Recommendation</strong>: Expand with specific verification steps</p>
+<h2>Positive Findings</h2>
+<h3>What Works Well:</h3>
+<ol>
+<li>Clean, modern documentation design</li>
+<li>Good use of code examples</li>
+<li>Error handling guide is comprehensive</li>
+<li>Frontend integration guide is detailed</li>
+<li>Testing section includes multiple scenarios</li>
+<li>Proper use of JSON:API standard (mostly)</li>
+</ol>
+<h2>Recommended Fixes Priority</h2>
+<h3>Immediate (Critical):</h3>
+<ol>
+<li>Fix split payment amount units inconsistency</li>
+<li>Add paymentMethodId complete example</li>
+<li>Standardize API endpoint URLs</li>
+</ol>
+<h3>Short-term (High Priority):</h3>
+<ol start="4">
+<li>Add Kount integration documentation</li>
+<li>Document token lifecycle/refresh</li>
+<li>Add webhook registration endpoint</li>
+<li>Add ACH payment documentation</li>
+</ol>
+<h3>Medium-term:</h3>
+<ol start="8">
+<li>Standardize error response formats</li>
+<li>Add refund API documentation</li>
+<li>Replace public test credentials</li>
+<li>Document rate limits</li>
+</ol>
+<h3>Long-term (Nice to Have):</h3>
+<ol start="12">
+<li>Add CORS configuration guide</li>
+<li>Expand production checklist</li>
+<li>Add troubleshooting section</li>
+<li>Add video tutorials</li>
+</ol>
+<h2>Testing Recommendations</h2>
+<h3>API Endpoints to Test:</h3>
+<ul>
+<li><input disabled="" type="checkbox"> POST /v4/auth/token</li>
+<li><input disabled="" type="checkbox"> POST /v4/payments (card payment)</li>
+<li><input disabled="" type="checkbox"> POST /v4/payments (stored payment method)</li>
+<li><input disabled="" type="checkbox"> POST /v4/payments (split payment)</li>
+<li><input disabled="" type="checkbox"> GET /v4/payments/details/{merchantId}/{paymentId}</li>
+<li><input disabled="" type="checkbox"> POST /v4/payments/{paymentId}/refund</li>
+<li><input disabled="" type="checkbox"> POST /v4/webhooks (if exists)</li>
+</ul>
+<h3>Integration Tests Needed:</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Frontend iframe integration</li>
+<li><input disabled="" type="checkbox"> Token expiration handling</li>
+<li><input disabled="" type="checkbox"> Rate limiting behavior</li>
+<li><input disabled="" type="checkbox"> Error response parsing</li>
+<li><input disabled="" type="checkbox"> Webhook delivery</li>
+<li><input disabled="" type="checkbox"> Split payment calculations</li>
+<li><input disabled="" type="checkbox"> Kount session integration</li>
+</ul>
+<h2>Conclusion</h2>
+<p>The PayVia API documentation is well-structured with good examples, but has several critical inconsistencies that could cause integration failures. The most urgent fixes are around split payments, stored payment methods, and API endpoint standardization.</p>
+<p><strong>Overall Grade: B-</strong></p>
+<ul>
+<li>Documentation Quality: A</li>
+<li>Completeness: C+</li>
+<li>Accuracy: B</li>
+<li>Examples: A-</li>
+<li>Organization: A</li>
+</ul>
+<h2>Action Items</h2>
+<ol>
+<li>Review and fix critical issues within 1 week</li>
+<li>Add missing documentation within 2 weeks</li>
+<li>Implement comprehensive test suite</li>
+<li>Add interactive API playground</li>
+<li>Schedule quarterly documentation reviews</li>
+</ol>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

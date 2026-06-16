@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAYVIA_INTEGRATION</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Payvia Checkout Integration - Escape from Dinosaur Island</h1>
+<h2>Overview</h2>
+<p>This site demonstrates a <strong>headless Payvia checkout</strong> integration that wraps the Digitzs/ProPay MID through Tokenex iframes, routing transactions transparently to Stripe while TicketSocket remains unaware of the custom payment flow.</p>
+<h2>Architecture</h2>
+<pre><code>User Browser
+    ↓
+Tokenex Iframe (Triple-hash encryption at device level)
+    ↓
+Payvia Service Layer
+    ↓
+Digitzs Gateway (digitzs-escapefrom-33738480-5013250-1771270463)
+    ↓
+ProPay MID (33738480-5013250-1771270463)
+    ↓
+Stripe Processor
+    ↓
+TicketSocket Backend (sees only Stripe transactions)
+</code></pre>
+<h2>Key Components</h2>
+<h3>Frontend Integration</h3>
+<p><strong><code>/src/components/PayviaCheckout.tsx</code></strong></p>
+<ul>
+<li>Embeds Tokenex iframes for card number and CVV</li>
+<li>Collects customer information and device fingerprinting data</li>
+<li>Handles tokenization and payment submission</li>
+<li>Triple-hash encryption at device level (PCI DSS 4.0 compliant)</li>
+</ul>
+<p><strong><code>/src/services/payvia.ts</code></strong></p>
+<ul>
+<li>Initializes Tokenex SDK with Digitzs MID configuration</li>
+<li>Manages device data collection (IP, geolocation, browser fingerprint)</li>
+<li>Handles transaction submission to edge function</li>
+<li>Processes payment responses</li>
+</ul>
+<h3>Backend Integration</h3>
+<p><strong><code>/supabase/functions/payvia-process/index.ts</code></strong></p>
+<ul>
+<li>Edge function that receives tokenized payment data</li>
+<li>Routes transactions through Digitzs transparent gateway</li>
+<li>Logs transaction details for chargeback defense</li>
+<li>Returns standardized payment response</li>
+</ul>
+<h2>Merchant ID Configuration</h2>
+<p><strong>Digitzs MID</strong>: <code>digitzs-escapefrom-33738480-5013250-1771270463</code></p>
+<ul>
+<li>Wraps ProPay MID: <code>33738480-5013250-1771270463</code></li>
+<li>Connected to Stripe processor</li>
+<li>Supports all card types including AMEX</li>
+</ul>
+<p><strong>Tokenex Config</strong>:</p>
+<ul>
+<li>Token Scheme: <code>sixTokenSixDigit</code></li>
+<li>Encryption: Triple-hash at device level</li>
+<li>Never touches our servers (PCI compliant)</li>
+</ul>
+<h2>Transaction Flow</h2>
+<ol>
+<li><strong>Customer selects date/time</strong> → Opens ticket modal</li>
+<li><strong>Enters customer info</strong> → First name, last name, email, phone, quantity</li>
+<li><strong>Tokenex iframe loads</strong> → Card and CVV fields rendered securely</li>
+<li><strong>Customer enters card</strong> → Tokenized at device level (triple-hash)</li>
+<li><strong>Submit payment</strong> → Token + customer data + device fingerprint sent to edge function</li>
+<li><strong>Edge function processes</strong> → Routes through Digitzs → ProPay → Stripe</li>
+<li><strong>Transaction recorded</strong> → Logged in TicketSocket alongside Stripe transactions</li>
+<li><strong>Success callback</strong> → User receives confirmation</li>
+</ol>
+<h2>Data Captured for Chargeback Defense</h2>
+<p>Every transaction captures:</p>
+<ul>
+<li>IP Address</li>
+<li>Device fingerprint (user agent, screen resolution, timezone)</li>
+<li>Browser language</li>
+<li>Complete customer information</li>
+<li>Event details (name, date, time)</li>
+<li>Tokenex transaction token</li>
+<li>Gateway routing information</li>
+</ul>
+<p>This comprehensive data collection provides maximum protection against chargebacks and fraud.</p>
+<h2>Integration with TicketSocket</h2>
+<p>The beauty of this integration is that <strong>TicketSocket doesn&#39;t know</strong> we&#39;re using Payvia + Tokenex. They only see:</p>
+<ul>
+<li>Transactions appearing in their Stripe dashboard</li>
+<li>Standard Stripe payment records</li>
+<li>Normal webhook callbacks</li>
+</ul>
+<p>Meanwhile, we get:</p>
+<ul>
+<li>Enhanced fraud protection via device fingerprinting</li>
+<li>Chargeback defense data collection</li>
+<li>Tokenex PCI compliance benefits</li>
+<li>Transparent gateway routing flexibility</li>
+<li>2.99% + $0.30 pricing (vs Stripe&#39;s higher rates)</li>
+</ul>
+<h2>Processor Flexibility</h2>
+<p>This same checkout can route to:</p>
+<ul>
+<li><strong>Stripe</strong> (via Digitzs MID) ✓ Current configuration</li>
+<li><strong>NMI</strong> (via raw ProPay MID 33738480)</li>
+<li><strong>PayPal Payments Pro</strong></li>
+<li>Any processor integrated with Digitzs</li>
+</ul>
+<p>Simply change the processor config in the edge function - no frontend changes needed.</p>
+<h2>Pricing</h2>
+<p><strong>MyValet/Digitzs Pricing</strong>:</p>
+<ul>
+<li>$29/month merchant account</li>
+<li>2.99% + $0.30 per transaction (all cards including AMEX)</li>
+<li>$29 per chargeback notification</li>
+<li>$29 per optional chargeback management</li>
+<li>$58 per dispute escalation (auto-submission + best win rate)</li>
+</ul>
+<p><strong>Stripe Comparison</strong>:</p>
+<ul>
+<li>2.9% + $0.30 (Visa/MC)</li>
+<li>3.5% + $0.30 (AMEX)</li>
+<li>$15 chargeback fee (no management)</li>
+</ul>
+<h2>Demo vs Production</h2>
+<p><strong>Current Status</strong>: Demo mode</p>
+<ul>
+<li>Tokenex SDK loads but uses fallback mock processing</li>
+<li>Shows transaction flow without real charges</li>
+<li>Console logs full transaction details</li>
+</ul>
+<p><strong>To Enable Production</strong>:</p>
+<ol>
+<li>Add Tokenex authentication key to <code>/src/services/payvia.ts</code></li>
+<li>Configure Digitzs API credentials in edge function</li>
+<li>Set up webhook handlers for payment confirmations</li>
+<li>Enable live transaction processing</li>
+</ol>
+<h2>Testing</h2>
+<p>Test the flow:</p>
+<ol>
+<li>Click &quot;Get Tickets&quot; on homepage</li>
+<li>Select a date (Thursday, Friday, or Saturday)</li>
+<li>Choose a time slot (5PM - 9PM)</li>
+<li>Fill in customer information</li>
+<li>Enter test card: 4242 4242 4242 4242</li>
+<li>Submit payment</li>
+<li>View transaction details in console</li>
+</ol>
+<h2>Benefits of This Approach</h2>
+<p>✓ <strong>PCI Compliant</strong> - Tokenex handles all card data
+✓ <strong>Fraud Protection</strong> - Device fingerprinting + IP tracking
+✓ <strong>Chargeback Defense</strong> - Comprehensive data collection
+✓ <strong>Processor Agnostic</strong> - Switch processors without code changes
+✓ <strong>TicketSocket Compatible</strong> - Seamless integration
+✓ <strong>Better Rates</strong> - 2.99% vs 3.5% for AMEX
+✓ <strong>Enhanced Security</strong> - Triple-hash encryption at device level</p>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

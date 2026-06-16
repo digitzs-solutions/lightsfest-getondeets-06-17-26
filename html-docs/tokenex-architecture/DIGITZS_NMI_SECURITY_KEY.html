@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIGITZS_NMI_SECURITY_KEY</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Digitzs/NMI Security Key Setup</h1>
+<h2>Overview</h2>
+<p>The Digitzs direct integration requires an <strong>API Security Key</strong> from your NMI gateway account. This is completely separate from TokenEx credentials and is used to authenticate API requests directly to the Digitzs/NMI payment gateway.</p>
+<hr>
+<h2>Where to Find Your Security Key</h2>
+<h3>Step 1: Access Digitzs Gateway Portal</h3>
+<p>Navigate to your white-labeled NMI portal:</p>
+<pre><code>https://digitzs.transactiongateway.com
+</code></pre>
+<p><strong>Login Credentials:</strong></p>
+<ul>
+<li>Username: Your Digitzs merchant login</li>
+<li>Password: Your gateway password</li>
+</ul>
+<h3>Step 2: Navigate to Security Keys</h3>
+<p>Once logged in:</p>
+<ol>
+<li>Click on <strong>Settings</strong> in the main navigation</li>
+<li>Select <strong>Security Keys</strong> from the dropdown</li>
+<li>Click on <strong>API Security Keys</strong> tab</li>
+</ol>
+<h3>Step 3: Generate or Copy Security Key</h3>
+<p>You&#39;ll see your API Security Key listed. It looks like:</p>
+<pre><code>2F822Rw39fx762MaV7Yy86jXGTC7sCDy
+</code></pre>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li>This is a 32-character alphanumeric string</li>
+<li>Keep this secret - it authenticates all API requests</li>
+<li>If you don&#39;t have one, click &quot;Generate New Key&quot;</li>
+<li>You can have multiple keys (useful for different environments)</li>
+</ul>
+<hr>
+<h2>Add Security Key to Supabase</h2>
+<h3>Via Supabase Dashboard</h3>
+<ol>
+<li>Go to your Supabase project dashboard</li>
+<li>Navigate to <strong>Edge Functions</strong> → <strong>Secrets</strong></li>
+<li>Click <strong>Add new secret</strong></li>
+<li>Enter:<ul>
+<li><strong>Name</strong>: <code>DIGITZS_SECURITY_KEY</code></li>
+<li><strong>Value</strong>: Your 32-character security key from Digitzs portal</li>
+</ul>
+</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<h3>Via Command Line (Alternative)</h3>
+<p>If using Supabase CLI:</p>
+<pre><code class="language-bash"># Set the secret
+supabase secrets set DIGITZS_SECURITY_KEY=2F822Rw39fx762MaV7Yy86jXGTC7sCDy
+
+# Verify it was set
+supabase secrets list
+</code></pre>
+<hr>
+<h2>Testing Your Integration</h2>
+<h3>Test the Security Key</h3>
+<p>After adding the security key, test the integration:</p>
+<pre><code class="language-bash"># Make a test API call to verify credentials
+curl -X POST https://digitzs.transactiongateway.com/api/transact.php \
+  -d &quot;security_key=YOUR_SECURITY_KEY&quot; \
+  -d &quot;type=validate&quot;
+</code></pre>
+<p><strong>Expected Response:</strong></p>
+<pre><code>response=1&amp;responsetext=SUCCESS
+</code></pre>
+<h3>Test Through Your Application</h3>
+<ol>
+<li>Open your application</li>
+<li>Navigate to the checkout page</li>
+<li>Enter test card: <code>4242424242424242</code></li>
+<li>Complete the payment form</li>
+<li>Submit the transaction</li>
+</ol>
+<p><strong>Success indicators:</strong></p>
+<ul>
+<li>No &quot;security key missing&quot; error</li>
+<li>Transaction processes successfully</li>
+<li>You receive a transaction ID back</li>
+<li>Transaction appears in Digitzs portal under Reports</li>
+</ul>
+<hr>
+<h2>Merchant ID Configuration</h2>
+<p>Your Digitzs/NMI integration connects to <strong>Propay MID 33595002</strong> through the NMI gateway.</p>
+<h3>Current Configuration</h3>
+<p><strong>White Label Gateway:</strong> <code>digitzs.transactiongateway.com</code>
+<strong>Merchant ID:</strong> 33595002 (Propay MID)
+<strong>API Endpoint:</strong> <code>https://digitzs.transactiongateway.com/api/transact.php</code></p>
+<h3>How It Works</h3>
+<pre><code>Your Application
+    ↓
+Digitzs Direct Integration (using security_key)
+    ↓
+NMI Gateway (digitzs.transactiongateway.com)
+    ↓
+Propay MID 33595002
+    ↓
+Card Networks (Visa/MC/Amex/Discover)
+</code></pre>
+<hr>
+<h2>TokenEx vs Direct Integration</h2>
+<h3>TokenEx Flow (Currently Disabled)</h3>
+<pre><code>Browser → TokenEx iframe → Tokenization → Payvia wrapper → Digitzs → Propay → Processor
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>PCI compliant (card data never touches your server)</li>
+<li>Triple-hash encryption</li>
+<li>Reduced PCI scope</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Requires TokenEx account to be active</li>
+<li>Additional service dependency</li>
+<li>More complex integration</li>
+</ul>
+<h3>Direct Digitzs/NMI Flow (Current Backup)</h3>
+<pre><code>Browser → Your form → Your server → Digitzs API → Propay → Processor
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Simple, direct API integration</li>
+<li>No third-party dependencies</li>
+<li>Easier to debug and troubleshoot</li>
+<li>Same MID and processor as TokenEx</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Higher PCI compliance requirements (SAQ D)</li>
+<li>Card data passes through your server</li>
+<li>You&#39;re responsible for securing card data</li>
+</ul>
+<hr>
+<h2>Environment Variables Summary</h2>
+<h3>Required for Direct Integration</h3>
+<pre><code class="language-bash"># Digitzs/NMI Gateway
+DIGITZS_SECURITY_KEY=&lt;32-char-api-key&gt;
+</code></pre>
+<h3>Required for TokenEx Integration (When Reactivated)</h3>
+<pre><code class="language-bash"># TokenEx Configuration
+TOKENEX_ID=7320744805319527
+TOKENEX_API_KEY=O9YFHDXYNXg4s3b0b1vxyxj5ZQU5l6DMirauHyB7
+</code></pre>
+<h3>Optional (Database/Ticketing)</h3>
+<pre><code class="language-bash"># TicketSocket
+TICKETSOCKET_API_URL=https://clevergroup.tscheckout.com/api/v2
+TICKETSOCKET_MERCHANT_ID=ticketso-clevergroup-33595002-4398786-1724692895
+TICKETSOCKET_USERNAME=Laura@digitzs.com
+TICKETSOCKET_PASSWORD=&lt;password&gt;
+</code></pre>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Error: &quot;DIGITZS_SECURITY_KEY not configured&quot;</h3>
+<p><strong>Cause:</strong> The security key environment variable is missing or empty.</p>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Log into Digitzs gateway portal</li>
+<li>Copy your API Security Key</li>
+<li>Add it to Supabase Edge Function secrets</li>
+<li>Redeploy the edge function (happens automatically)</li>
+<li>Retry the transaction</li>
+</ol>
+<h3>Error: &quot;Invalid security key&quot;</h3>
+<p><strong>Cause:</strong> The security key is incorrect or has been regenerated.</p>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Verify you copied the entire 32-character key</li>
+<li>Check for extra spaces or line breaks</li>
+<li>Generate a new key if necessary</li>
+<li>Update the secret in Supabase</li>
+<li>Test again</li>
+</ol>
+<h3>Error: &quot;Authentication failed&quot;</h3>
+<p><strong>Cause:</strong> Multiple possible reasons.</p>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Verify the security key is correct</li>
+<li>Check that your IP is not blocked in gateway settings</li>
+<li>Ensure your merchant account is active</li>
+<li>Contact Digitzs support if issues persist</li>
+</ol>
+<h3>Transactions Declining</h3>
+<p><strong>Cause:</strong> MID configuration or processor issues.</p>
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Log into Digitzs portal and check MID status</li>
+<li>Verify Propay MID 33595002 is active</li>
+<li>Check transaction logs in gateway portal</li>
+<li>Review decline reasons in response codes</li>
+<li>Contact Digitzs merchant support</li>
+</ol>
+<hr>
+<h2>Security Best Practices</h2>
+<h3>Protecting Your Security Key</h3>
+<ol>
+<li><p><strong>Never commit to source control</strong></p>
+<ul>
+<li>Use environment variables only</li>
+<li>Add <code>.env</code> to <code>.gitignore</code></li>
+<li>Use Supabase secrets for production</li>
+</ul>
+</li>
+<li><p><strong>Rotate keys periodically</strong></p>
+<ul>
+<li>Generate new keys quarterly</li>
+<li>Update in Supabase immediately</li>
+<li>Monitor for unauthorized usage</li>
+</ul>
+</li>
+<li><p><strong>Use different keys per environment</strong></p>
+<ul>
+<li>Development: Test account key</li>
+<li>Staging: Separate test key</li>
+<li>Production: Live account key</li>
+</ul>
+</li>
+<li><p><strong>Monitor API usage</strong></p>
+<ul>
+<li>Review transaction logs regularly</li>
+<li>Set up alerts for unusual activity</li>
+<li>Check for failed authentication attempts</li>
+</ul>
+</li>
+</ol>
+<h3>PCI Compliance with Direct Integration</h3>
+<p><strong>Important:</strong> When using direct integration (not TokenEx):</p>
+<ol>
+<li><p><strong>You are now in PCI scope</strong></p>
+<ul>
+<li>Card data passes through your server</li>
+<li>You must complete SAQ D (or SAQ D-Merchant)</li>
+<li>Quarterly network scans required</li>
+</ul>
+</li>
+<li><p><strong>Required security measures:</strong></p>
+<ul>
+<li>HTTPS/TLS 1.2+ on all pages</li>
+<li>Secure server configuration</li>
+<li>Regular security updates</li>
+<li>Access control and monitoring</li>
+<li>Encryption of stored data (if any)</li>
+</ul>
+</li>
+<li><p><strong>Do NOT store:</strong></p>
+<ul>
+<li>Full card numbers (PAN)</li>
+<li>CVV/CVC codes</li>
+<li>PIN data</li>
+<li>Track data from magnetic stripe</li>
+</ul>
+</li>
+<li><p><strong>You MAY store:</strong></p>
+<ul>
+<li>Cardholder name</li>
+<li>Expiration date (encrypted)</li>
+<li>Last 4 digits of card</li>
+<li>Transaction IDs and references</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>When TokenEx Reactivates</h2>
+<p>Once TokenEx reactivates your account:</p>
+<ol>
+<li><p><strong>Switch back to TokenEx flow</strong></p>
+<ul>
+<li>The application automatically detects when TokenEx is available</li>
+<li>Falls back to direct integration when TokenEx fails</li>
+<li>No code changes needed</li>
+</ul>
+</li>
+<li><p><strong>Keep both integrations active</strong></p>
+<ul>
+<li>Direct integration as backup</li>
+<li>TokenEx as primary for PCI compliance</li>
+<li>Seamless failover if TokenEx has issues</li>
+</ul>
+</li>
+<li><p><strong>PCI Compliance improvement</strong></p>
+<ul>
+<li>Back to SAQ-A (simplest form)</li>
+<li>Card data never touches your servers</li>
+<li>Reduced compliance burden</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>Support Contacts</h2>
+<h3>Digitzs/NMI Support</h3>
+<p><strong>Gateway Technical Support:</strong></p>
+<ul>
+<li>Email: <a href="mailto:support@nmi.com">support@nmi.com</a></li>
+<li>Phone: 1-866-481-3280</li>
+<li>Portal: <a href="https://digitzs.transactiongateway.com/merchants/support">https://digitzs.transactiongateway.com/merchants/support</a></li>
+</ul>
+<p><strong>Digitzs Merchant Support:</strong></p>
+<ul>
+<li>Email: <a href="mailto:Laura@digitzs.com">Laura@digitzs.com</a></li>
+<li>Phone: Contact your account representative</li>
+</ul>
+<h3>Security Key Issues</h3>
+<p>If you cannot find or access your security key:</p>
+<ol>
+<li>Contact Digitzs merchant support</li>
+<li>Verify your merchant account status</li>
+<li>Request new security key generation</li>
+<li>Update keys in both test and live environments</li>
+</ol>
+<hr>
+<h2>API Reference</h2>
+<h3>Direct Post API Endpoint</h3>
+<pre><code>POST https://digitzs.transactiongateway.com/api/transact.php
+Content-Type: application/x-www-form-urlencoded
+</code></pre>
+<h3>Required Parameters</h3>
+<pre><code>security_key=&lt;your-32-char-key&gt;
+type=sale
+amount=10.00
+ccnumber=4242424242424242
+ccexp=1225
+cvv=123
+firstname=John
+lastname=Doe
+email=john@example.com
+phone=5551234567
+</code></pre>
+<h3>Optional Parameters</h3>
+<pre><code>address1=123 Main St
+city=Dallas
+state=TX
+zip=75001
+country=US
+orderid=ORDER-12345
+ipaddress=192.168.1.1
+</code></pre>
+<h3>Response Format</h3>
+<pre><code>response=1&amp;responsetext=SUCCESS&amp;authcode=123456&amp;transactionid=7890123456&amp;avsresponse=Y&amp;cvvresponse=M&amp;orderid=ORDER-12345
+</code></pre>
+<p><strong>Response Codes:</strong></p>
+<ul>
+<li><code>1</code> = Approved</li>
+<li><code>2</code> = Declined</li>
+<li><code>3</code> = Error</li>
+</ul>
+<hr>
+<h2>Related Documentation</h2>
+<ul>
+<li><strong><code>TOKENEX_END_TO_END_PROCESS.md</code></strong> - TokenEx integration details</li>
+<li><strong><code>DIGITZS_DIRECT_INTEGRATION.md</code></strong> - Direct API implementation guide</li>
+<li><strong><code>IMPLEMENTATION_STATUS.md</code></strong> - Current status and recovery steps</li>
+</ul>
+<hr>
+<p><strong>Document Version</strong>: 1.0
+<strong>Last Updated</strong>: March 24, 2026
+<strong>Author</strong>: Integration Team
+<strong>Status</strong>: Active - Direct Integration Backup</p>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

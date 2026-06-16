@@ -1,0 +1,674 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IXOPAY_TOKENEX_REFERENCE</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Ixopay (aka TokenEx) - Technical Reference</h1>
+<h2>Overview</h2>
+<p>PayVia leverages Ixopay&#39;s tokenization platform (branded as TokenEx) to provide PCI DSS Level 1 compliant payment processing with device-level triple-hash encryption. This document consolidates technical resources and implementation details.</p>
+<hr>
+<h2>Official Documentation Links</h2>
+<h3>Ixopay Platform</h3>
+<ul>
+<li><strong>Homepage</strong>: <a href="https://www.ixopay.com/">https://www.ixopay.com/</a></li>
+<li><strong>Core Documentation</strong>: <a href="https://documentation.ixopay.com/modules/docs/tokenex/welcome">https://documentation.ixopay.com/modules/docs/tokenex/welcome</a></li>
+<li><strong>PCI Configuration</strong>: <a href="https://documentation.ixopay.com/modules/docs/tokenex/welcome#pci-configuration">https://documentation.ixopay.com/modules/docs/tokenex/welcome#pci-configuration</a></li>
+<li><strong>Solutions Overview</strong>: <a href="https://www.ixopay.com/solutions/reduce-fraud-increase-security">https://www.ixopay.com/solutions/reduce-fraud-increase-security</a></li>
+</ul>
+<h3>Fraud Prevention &amp; Risk Analysis</h3>
+<ul>
+<li><strong>Kount Integration</strong>: <a href="https://documentation.ixopay.com/modules/docs/tokenex/kount-data-collection-and-risk-analysis">https://documentation.ixopay.com/modules/docs/tokenex/kount-data-collection-and-risk-analysis</a></li>
+</ul>
+<h3>Developer Resources</h3>
+<ul>
+<li><strong>TokenEx Web SDK Documentation</strong>: <a href="https://github.com/TokenEx/tokenex.github.io/blob/master/content/Web.md">https://github.com/TokenEx/tokenex.github.io/blob/master/content/Web.md</a></li>
+<li><strong>Demo Application</strong>: <a href="https://tokenexwebdemo.azurewebsites.net/Home">https://tokenexwebdemo.azurewebsites.net/Home</a></li>
+</ul>
+<hr>
+<h2>PayVia + Ixopay Integration Architecture</h2>
+<p>PayVia uses Ixopay&#39;s tokenization layer to provide secure payment processing that never exposes card data to merchant servers.</p>
+<pre><code>Customer Browser
+    ↓
+Ixopay/TokenEx Iframe (Device-level tokenization)
+    ↓
+PayVia Service Layer
+    ↓
+Digitzs Gateway
+    ↓
+ProPay MID
+    ↓
+Stripe Processor
+</code></pre>
+<h3>Key Benefits</h3>
+<ol>
+<li><p><strong>PCI Scope Reduction</strong></p>
+<ul>
+<li>Card data tokenized at device level</li>
+<li>Merchant never touches sensitive card data</li>
+<li>Reduces PCI compliance to SAQ-A (simplest form)</li>
+</ul>
+</li>
+<li><p><strong>Triple-Hash Encryption</strong></p>
+<ul>
+<li>Encryption happens in browser before transmission</li>
+<li>Three layers of cryptographic hashing</li>
+<li>Even Ixopay cannot reverse the encryption without keys</li>
+</ul>
+</li>
+<li><p><strong>Fraud Prevention</strong></p>
+<ul>
+<li>Device fingerprinting</li>
+<li>IP address tracking</li>
+<li>Kount risk analysis integration</li>
+<li>Behavioral analytics</li>
+</ul>
+</li>
+<li><p><strong>Processor Agnostic</strong></p>
+<ul>
+<li>Works with any payment processor</li>
+<li>Easy to switch processors without code changes</li>
+<li>Current configuration: Stripe via ProPay</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>Technical Implementation</h2>
+<h3>Current Configuration</h3>
+<p><strong>TokenEx Account Details:</strong></p>
+<ul>
+<li><strong>TokenEx ID</strong>: <code>6747114507881848</code> (Digitzs account)</li>
+<li><strong>Token Scheme</strong>: <code>sixTokenSixDigit</code> (6 first digits + TOKEN + 4 last digits)</li>
+<li><strong>Encryption</strong>: Triple-hash at device level</li>
+<li><strong>Authentication</strong>: HMAC-SHA256 with 20-minute expiration</li>
+</ul>
+<p><strong>Merchant Configuration:</strong></p>
+<ul>
+<li><strong>Digitzs MID</strong>: <code>digitzs-escapefrom-33738480-5013250-1771770463</code></li>
+<li><strong>ProPay MID</strong>: <code>33738480-5013250-1771770463</code></li>
+<li><strong>Processor</strong>: Stripe</li>
+<li><strong>Pricing</strong>: 2.99% + $0.30 per transaction</li>
+</ul>
+<h3>Authentication Flow</h3>
+<p>Ixopay requires time-limited HMAC authentication keys to initialize iframes:</p>
+<ol>
+<li><strong>Frontend requests auth key</strong> from Edge Function</li>
+<li><strong>Edge Function generates HMAC</strong>:<pre><code>Payload: tokenExID|origin|timestamp|tokenScheme
+Signature: HMAC-SHA256(payload, clientSecretKey)
+AuthKey: Base64(signature)
+</code></pre>
+</li>
+<li><strong>Frontend initializes iframe</strong> with auth key</li>
+<li><strong>Iframe loads</strong> with 20-minute expiration window</li>
+</ol>
+<p><strong>Implementation</strong>: <code>/supabase/functions/tokenex-auth/index.ts</code></p>
+<h3>Tokenization Flow</h3>
+<ol>
+<li><strong>User enters card details</strong> in secure iframe</li>
+<li><strong>Triple-hash encryption</strong> at device level</li>
+<li><strong>Token generated</strong> by Ixopay servers</li>
+<li><strong>Token returned</strong> to frontend (e.g., <code>6747114507881848</code>)</li>
+<li><strong>Token sent</strong> to backend with transaction data</li>
+<li><strong>Backend processes</strong> payment using token</li>
+<li><strong>Card data never</strong> touches merchant infrastructure</li>
+</ol>
+<p><strong>Implementation</strong>: <code>/src/services/payvia.ts</code></p>
+<h3>Transaction Processing</h3>
+<p><strong>Edge Function</strong>: <code>/supabase/functions/payvia-process/index.ts</code></p>
+<p>Receives:</p>
+<ul>
+<li>TokenEx token (replaces card number)</li>
+<li>Customer information</li>
+<li>Event details</li>
+<li>Device fingerprint data</li>
+</ul>
+<p>Routes through:</p>
+<ul>
+<li>Digitzs Gateway (transparent routing)</li>
+<li>ProPay MID (merchant account)</li>
+<li>Stripe (processor)</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Transaction ID</li>
+<li>Approval/decline status</li>
+<li>Error details (if any)</li>
+</ul>
+<hr>
+<h2>PCI DSS Compliance</h2>
+<h3>Ixopay&#39;s PCI Certification</h3>
+<ul>
+<li><strong>Level</strong>: PCI DSS Level 1 Service Provider</li>
+<li><strong>Scope</strong>: Full payment tokenization infrastructure</li>
+<li><strong>Certification</strong>: Annually audited by QSA (Qualified Security Assessor)</li>
+</ul>
+<h3>Merchant PCI Requirements</h3>
+<p>With Ixopay tokenization:</p>
+<ul>
+<li><strong>SAQ Type</strong>: SAQ-A (simplest, ~22 questions)</li>
+<li><strong>Network Scan</strong>: Not required</li>
+<li><strong>Attestation</strong>: Annual self-assessment only</li>
+<li><strong>No card data storage</strong>: No merchant server touches card data</li>
+</ul>
+<p>Without tokenization:</p>
+<ul>
+<li><strong>SAQ Type</strong>: SAQ-D (complex, ~300+ questions)</li>
+<li><strong>Network Scan</strong>: Quarterly ASV scans required</li>
+<li><strong>Attestation</strong>: May require QSA audit</li>
+<li><strong>Secure storage</strong>: PCI-compliant infrastructure needed</li>
+</ul>
+<h3>PCI Configuration Guide</h3>
+<p>See: <a href="https://documentation.ixopay.com/modules/docs/tokenex/welcome#pci-configuration">https://documentation.ixopay.com/modules/docs/tokenex/welcome#pci-configuration</a></p>
+<p>Key configurations:</p>
+<ol>
+<li><strong>Iframe Integration</strong>: Ensures card data never enters DOM</li>
+<li><strong>HTTPS Required</strong>: All pages must use TLS 1.2+</li>
+<li><strong>CSP Headers</strong>: Content Security Policy to prevent XSS</li>
+<li><strong>Token Storage</strong>: Tokens can be stored safely (not reversible)</li>
+</ol>
+<hr>
+<h2>Fraud Prevention Features</h2>
+<h3>Device Fingerprinting</h3>
+<p>Ixopay collects comprehensive device data:</p>
+<p><strong>Automatic Collection:</strong></p>
+<ul>
+<li>Browser user agent</li>
+<li>Screen resolution</li>
+<li>Color depth</li>
+<li>Timezone</li>
+<li>Browser language</li>
+<li>Installed plugins</li>
+<li>Canvas fingerprint</li>
+<li>WebGL fingerprint</li>
+</ul>
+<p><strong>Server-Side Collection:</strong></p>
+<ul>
+<li>IP address</li>
+<li>Geolocation</li>
+<li>ISP information</li>
+<li>Proxy detection</li>
+</ul>
+<p><strong>Implementation in Project:</strong></p>
+<pre><code class="language-typescript">// /src/services/payvia.ts
+const deviceData = {
+  ipAddress: &#39;&#39;, // Collected server-side
+  userAgent: navigator.userAgent,
+  browserLanguage: navigator.language,
+  screenResolution: `${screen.width}x${screen.height}`,
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+};
+</code></pre>
+<h3>Kount Integration</h3>
+<p>Ixopay integrates with Kount for advanced risk analysis:</p>
+<p><strong>Documentation</strong>: <a href="https://documentation.ixopay.com/modules/docs/tokenex/kount-data-collection-and-risk-analysis">https://documentation.ixopay.com/modules/docs/tokenex/kount-data-collection-and-risk-analysis</a></p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Real-time fraud scoring</li>
+<li>Device reputation tracking</li>
+<li>Velocity checks (transactions per IP/device)</li>
+<li>Geolocation validation</li>
+<li>Email/phone verification</li>
+<li>Machine learning models</li>
+</ul>
+<p><strong>Risk Scores:</strong></p>
+<ul>
+<li>0-20: Low risk (approve)</li>
+<li>21-40: Medium risk (review)</li>
+<li>41-70: High risk (challenge)</li>
+<li>71-100: Very high risk (decline)</li>
+</ul>
+<h3>Velocity Checks</h3>
+<p>Automatic monitoring for:</p>
+<ul>
+<li>Multiple transactions from same IP</li>
+<li>Multiple transactions from same device</li>
+<li>Multiple transactions with same email</li>
+<li>Rapid-fire transaction attempts</li>
+<li>Unusual purchasing patterns</li>
+</ul>
+<hr>
+<h2>Integration with Current Project</h2>
+<h3>Files Modified for Ixopay Integration</h3>
+<ol>
+<li><p><strong><code>/src/components/PayviaCheckout.tsx</code></strong></p>
+<ul>
+<li>Embeds TokenEx iframes</li>
+<li>Handles tokenization callbacks</li>
+<li>Collects device data</li>
+</ul>
+</li>
+<li><p><strong><code>/src/services/payvia.ts</code></strong></p>
+<ul>
+<li>Initializes TokenEx SDK</li>
+<li>Manages authentication</li>
+<li>Processes transactions</li>
+</ul>
+</li>
+<li><p><strong><code>/supabase/functions/tokenex-auth/index.ts</code></strong></p>
+<ul>
+<li>Generates HMAC auth keys</li>
+<li>Validates request origin</li>
+<li>Returns time-limited tokens</li>
+</ul>
+</li>
+<li><p><strong><code>/supabase/functions/payvia-process/index.ts</code></strong></p>
+<ul>
+<li>Receives tokenized transactions</li>
+<li>Routes through Digitzs gateway</li>
+<li>Logs for chargeback defense</li>
+</ul>
+</li>
+</ol>
+<h3>Environment Variables Required</h3>
+<p><strong>Supabase Edge Function Secrets:</strong></p>
+<pre><code class="language-bash"># TokenEx/Ixopay Configuration
+TOKENEX_ID=6747114507881848
+TOKENEX_SECRET_KEY=&lt;client-secret-key&gt;
+
+# Digitzs Gateway
+DIGITZS_MERCHANT_ID=digitzs-escapefrom-33738480-5013250-1771770463
+DIGITZS_API_KEY=&lt;api-key&gt;
+DIGITZS_APP_KEY=&lt;app-key&gt;
+</code></pre>
+<p><strong>Frontend Environment Variables:</strong></p>
+<pre><code class="language-bash">VITE_SUPABASE_URL=&lt;supabase-project-url&gt;
+VITE_SUPABASE_ANON_KEY=&lt;supabase-anon-key&gt;
+</code></pre>
+<h3>Current Status</h3>
+<p><strong>Demo Mode:</strong></p>
+<ul>
+<li>TokenEx ID configured</li>
+<li>Client Secret Key needs to be added</li>
+<li>Mock transactions for testing</li>
+</ul>
+<p><strong>To Enable Production:</strong></p>
+<ol>
+<li>Obtain Client Secret Key from TokenEx portal</li>
+<li>Add as Supabase Edge Function secret</li>
+<li>Verify HTTPS on production domain</li>
+<li>Test with $1 parking pass transactions</li>
+<li>Monitor transaction logs</li>
+</ol>
+<hr>
+<h2>Testing &amp; Debugging</h2>
+<h3>Test Card Numbers</h3>
+<p><strong>Visa:</strong></p>
+<ul>
+<li>Success: <code>4242 4242 4242 4242</code></li>
+<li>Decline: <code>4000 0000 0000 0002</code></li>
+<li>3D Secure: <code>4000 0025 0000 3155</code></li>
+</ul>
+<p><strong>Mastercard:</strong></p>
+<ul>
+<li>Success: <code>5555 5555 5555 4444</code></li>
+</ul>
+<p><strong>American Express:</strong></p>
+<ul>
+<li>Success: <code>3782 822463 10005</code></li>
+</ul>
+<p><strong>Any CVV</strong>: 123
+<strong>Any Expiration</strong>: Future date (e.g., 12/25)
+<strong>Any ZIP</strong>: 12345</p>
+<h3>TokenEx Demo Application</h3>
+<p>Test the TokenEx platform directly:
+<a href="https://tokenexwebdemo.azurewebsites.net/Home">https://tokenexwebdemo.azurewebsites.net/Home</a></p>
+<p>Features:</p>
+<ul>
+<li>Live iframe demonstration</li>
+<li>Token generation testing</li>
+<li>API response viewing</li>
+<li>Various configuration options</li>
+</ul>
+<h3>Debugging Tools</h3>
+<p><strong>Browser Console:</strong></p>
+<pre><code class="language-javascript">// Enable TokenEx debug mode
+localStorage.setItem(&#39;tx-debug&#39;, &#39;true&#39;);
+
+// Log all TokenEx events
+iframe.on(&#39;load&#39;, () =&gt; console.log(&#39;Iframe loaded&#39;));
+iframe.on(&#39;tokenize&#39;, (data) =&gt; console.log(&#39;Token:&#39;, data));
+iframe.on(&#39;error&#39;, (err) =&gt; console.error(&#39;Error:&#39;, err));
+iframe.on(&#39;validate&#39;, (data) =&gt; console.log(&#39;Validation:&#39;, data));
+</code></pre>
+<p><strong>Edge Function Logs:</strong></p>
+<ul>
+<li>View in Supabase Dashboard → Edge Functions → Logs</li>
+<li>Filter by function name</li>
+<li>Check for authentication errors</li>
+<li>Verify HMAC generation</li>
+</ul>
+<hr>
+<h2>Security Best Practices</h2>
+<h3>Authentication Key Management</h3>
+<ol>
+<li><strong>Never expose Client Secret Key</strong> in frontend code</li>
+<li><strong>Generate keys server-side</strong> only</li>
+<li><strong>Use 20-minute expiration</strong> (TokenEx requirement)</li>
+<li><strong>Validate request origin</strong> before generating keys</li>
+<li><strong>Rotate secrets periodically</strong> (quarterly recommended)</li>
+</ol>
+<h3>Token Handling</h3>
+<ol>
+<li><strong>Tokens are safe to store</strong> (not reversible to card data)</li>
+<li><strong>Use HTTPS</strong> for all token transmission</li>
+<li><strong>Implement CSP headers</strong> to prevent XSS</li>
+<li><strong>Log token usage</strong> for audit trail</li>
+<li><strong>Never log full card numbers</strong> (PCI violation)</li>
+</ol>
+<h3>Fraud Prevention</h3>
+<ol>
+<li><strong>Collect comprehensive device data</strong> on every transaction</li>
+<li><strong>Store device fingerprints</strong> for chargeback defense</li>
+<li><strong>Monitor velocity patterns</strong> for unusual activity</li>
+<li><strong>Implement 3D Secure</strong> for high-value transactions</li>
+<li><strong>Use address verification</strong> (AVS) when available</li>
+</ol>
+<hr>
+<h2>Support &amp; Resources</h2>
+<h3>Ixopay Support</h3>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:support@ixopay.com">support@ixopay.com</a></li>
+<li><strong>Documentation</strong>: <a href="https://documentation.ixopay.com/">https://documentation.ixopay.com/</a></li>
+<li><strong>GitHub</strong>: <a href="https://github.com/TokenEx">https://github.com/TokenEx</a></li>
+</ul>
+<h3>TokenEx Support</h3>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:support@tokenex.com">support@tokenex.com</a></li>
+<li><strong>Phone</strong>: 1-800-836-3710</li>
+<li><strong>Portal</strong>: <a href="https://portal.tokenex.com">https://portal.tokenex.com</a></li>
+</ul>
+<h3>Digitzs/PayVia Support</h3>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:support@digitzs.com">support@digitzs.com</a></li>
+<li><strong>Phone</strong>: 1-888-123-4567</li>
+<li><strong>Contact</strong>: <a href="mailto:Laura@digitzs.com">Laura@digitzs.com</a></li>
+</ul>
+<hr>
+<h2>Related Documentation</h2>
+<ul>
+<li><strong><code>PAYVIA_INTEGRATION.md</code></strong> - Overview of PayVia checkout integration</li>
+<li><strong><code>TOKENEX_SETUP.md</code></strong> - Step-by-step TokenEx credential setup</li>
+<li><strong><code>DIGITZS_PAYVIA_END_TO_END.md</code></strong> - Complete implementation guide</li>
+<li><strong><code>TICKETSOCKET_SETUP.md</code></strong> - TicketSocket API integration</li>
+</ul>
+<hr>
+<h2>Appendix: Ixopay vs TokenEx Branding</h2>
+<p><strong>Note</strong>: Ixopay and TokenEx are the same platform with different branding:</p>
+<ul>
+<li><strong>Ixopay</strong>: Company name and platform</li>
+<li><strong>TokenEx</strong>: Product name for tokenization service</li>
+<li><strong>Same technology</strong>: Identical API, features, and security</li>
+<li><strong>Use interchangeably</strong>: Documentation uses both names</li>
+</ul>
+<p>Our implementation uses:</p>
+<ul>
+<li>&quot;TokenEx&quot; in code variables and function names</li>
+<li>&quot;Ixopay&quot; when referencing company documentation</li>
+<li>Both terms refer to the same tokenization platform</li>
+</ul>
+<hr>
+<p><strong>Document Version</strong>: 1.0
+<strong>Last Updated</strong>: March 22, 2026
+<strong>Author</strong>: Digitzs Integration Team
+<strong>Status</strong>: Reference Documentation</p>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

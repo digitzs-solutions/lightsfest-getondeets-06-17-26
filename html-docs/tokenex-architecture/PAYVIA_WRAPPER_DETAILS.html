@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAYVIA_WRAPPER_DETAILS</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>Payvia Wrapper Implementation Details</h1>
+<h2>What is Payvia?</h2>
+<p>Payvia is a processor-agnostic embedded checkout solution that wraps Tokenex&#39;s iFrame to provide:</p>
+<ul>
+<li>Unified checkout experience across 200+ processors</li>
+<li>PCI-compliant payment collection</li>
+<li>Multi-processor routing capabilities</li>
+<li>Consistent API regardless of backend processor</li>
+</ul>
+<h2>Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    Your Application                      │
+│                                                          │
+│  ┌────────────────────────────────────────────────┐    │
+│  │         Payvia Checkout Component              │    │
+│  │                                                 │    │
+│  │  ┌──────────────────────────────────────┐     │    │
+│  │  │      Tokenex iFrame                  │     │    │
+│  │  │  ┌────────────────────────────┐     │     │    │
+│  │  │  │   Card Number: [    ]      │     │     │    │
+│  │  │  │   Expiry: [  ] CVV: [ ]    │     │     │    │
+│  │  │  └────────────────────────────┘     │     │    │
+│  │  └──────────────────────────────────────┘     │    │
+│  │                                                 │    │
+│  │  [Pay $45.00]                                  │    │
+│  └────────────────────────────────────────────────┘    │
+│                          ↓                              │
+│                    Your Edge Function                   │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│              Tokenex Transparent Gateway                │
+│                                                          │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐       │
+│  │  Propay    │  │    NMI     │  │   Stripe   │       │
+│  │ MID:33595  │  │ MID:12345  │  │ acct_xyz   │       │
+│  └────────────┘  └────────────┘  └────────────┘       │
+│                                                          │
+│  ... 197 more processors                                │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<h2>Component Breakdown</h2>
+<h3>1. Payvia Checkout Modal</h3>
+<pre><code class="language-typescript">// React component wrapping Tokenex iFrame
+interface PayviaCheckoutProps {
+  amount: number;
+  currency: string;
+  merchantId: string;
+  processor: &#39;propay&#39; | &#39;nmi&#39; | &#39;stripe&#39; | string;
+  onSuccess: (transactionId: string) =&gt; void;
+  onError: (error: Error) =&gt; void;
+  customerInfo: CustomerInfo;
+  eventInfo: EventInfo;
+}
+</code></pre>
+<h3>2. Tokenex iFrame Initialization</h3>
+<pre><code class="language-javascript">// Load Tokenex iframe
+const tokenExIframe = new TokenEx.Iframe(&#39;tokenExIframeDiv&#39;, {
+  tokenExID: TOKENEX_ID,
+  tokenScheme: &#39;PCI&#39;,
+  origin: window.location.origin,
+  timestamp: Date.now(),
+  authenticationKey: generateHMAC(),
+  styles: {
+    base: &#39;font-family: Arial; padding: 10px;&#39;,
+    focus: &#39;border: 2px solid blue;&#39;,
+    error: &#39;border: 2px solid red;&#39;,
+  },
+  pci: true,
+  cvv: true,
+  cvvContainerID: &#39;cvv-container&#39;,
+  enablePrettyFormat: true,
+  placeholder: &#39;0000 0000 0000 0000&#39;,
+});
+
+// Listen for tokenization
+tokenExIframe.on(&#39;tokenize&#39;, (data) =&gt; {
+  const token = data.token;
+  processPayment(token);
+});
+
+// Load the iframe
+tokenExIframe.load();
+</code></pre>
+<h3>3. HMAC Authentication</h3>
+<pre><code class="language-typescript">// Generate authentication key for iframe
+function generateHMAC(
+  tokenExID: string,
+  apiKey: string,
+  timestamp: number
+): string {
+  const crypto = require(&#39;crypto&#39;);
+  const message = `${tokenExID}|${timestamp}`;
+  return crypto
+    .createHmac(&#39;sha256&#39;, apiKey)
+    .update(message)
+    .digest(&#39;hex&#39;);
+}
+</code></pre>
+<h3>4. Payment Processing Flow</h3>
+<pre><code class="language-typescript">async function processPayment(token: string) {
+  try {
+    // 1. Collect device data
+    const deviceData = {
+      ipAddress: await getClientIP(),
+      userAgent: navigator.userAgent,
+      browserLanguage: navigator.language,
+      screenResolution: `${screen.width}x${screen.height}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    // 2. Call your edge function
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/payvia-process`,
+      {
+        method: &#39;POST&#39;,
+        headers: {
+          &#39;Content-Type&#39;: &#39;application/json&#39;,
+          &#39;Authorization&#39;: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          tokenexToken: token,
+          amount: 45.00,
+          currency: &#39;USD&#39;,
+          orderId: generateOrderId(),
+          merchantId: &#39;33595002&#39;,
+          processor: &#39;propay&#39;,
+          gatewayType: &#39;digitzs&#39;,
+          customerInfo,
+          eventInfo,
+          deviceData,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    // 3. Handle response
+    if (result.success) {
+      onSuccess(result.transactionId);
+      await createTicketSocketOrder(result);
+    } else {
+      onError(new Error(result.message));
+    }
+  } catch (error) {
+    onError(error);
+  }
+}
+</code></pre>
+<h3>5. Edge Function (Tokenex Integration)</h3>
+<pre><code class="language-typescript">// supabase/functions/payvia-process/index.ts
+async function processTokenexTransaction(data: TransactionRequest) {
+  // Call Tokenex Transparent Gateway API
+  const response = await fetch(
+    &#39;https://api.tokenex.com/v2/TransparentGatewayAPI&#39;,
+    {
+      method: &#39;POST&#39;,
+      headers: {
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;tx-tokenex-id&#39;: TOKENEX_ID,
+        &#39;tx-apikey&#39;: TOKENEX_API_KEY,
+      },
+      body: JSON.stringify({
+        Token: data.tokenexToken,
+        Amount: data.amount.toFixed(2),
+        Currency: data.currency,
+        Gateway: &#39;NMI&#39;, // or &#39;Propay&#39;, &#39;Stripe&#39;, etc.
+        GatewayCredentials: {
+          MerchantID: data.merchantId,
+          // Additional credentials if needed
+        },
+        TransactionType: &#39;sale&#39;,
+        OrderID: data.orderId,
+        CustomerInfo: {
+          FirstName: data.customerInfo.firstName,
+          LastName: data.customerInfo.lastName,
+          Email: data.customerInfo.email,
+          Phone: data.customerInfo.phone,
+        },
+        BillingInfo: {
+          // Address fields
+        },
+        DeviceData: data.deviceData,
+      }),
+    }
+  );
+
+  return await response.json();
+}
+</code></pre>
+<h2>Processor Configuration</h2>
+<h3>Propay MID 33595002</h3>
+<pre><code class="language-javascript">const propayConfig = {
+  processor: &#39;propay&#39;,
+  merchantId: &#39;33595002&#39;,
+  gateway: &#39;NMI&#39;, // Digitzs is NMI white label
+  credentials: {
+    // Stored in Tokenex dashboard
+    merchantId: &#39;33595002&#39;,
+  },
+};
+</code></pre>
+<h3>Multiple Processors</h3>
+<pre><code class="language-javascript">const processorConfigs = {
+  lightsfest: {
+    processor: &#39;propay&#39;,
+    merchantId: &#39;33595002&#39;,
+    gateway: &#39;NMI&#39;,
+  },
+  dinosaurisland: {
+    processor: &#39;propay&#39;,
+    merchantId: &#39;33595002&#39;,
+    gateway: &#39;NMI&#39;,
+  },
+  // Future events can use different processors
+  futureEvent: {
+    processor: &#39;stripe&#39;,
+    merchantId: &#39;acct_stripe123&#39;,
+    gateway: &#39;Stripe&#39;,
+  },
+};
+</code></pre>
+<h2>Processor Routing Logic</h2>
+<h3>Dynamic Processor Selection</h3>
+<pre><code class="language-typescript">function selectProcessor(eventId: string): ProcessorConfig {
+  const event = await getEventDetails(eventId);
+
+  // Route based on event configuration
+  if (event.processor_override) {
+    return event.processor_override;
+  }
+
+  // Route based on amount
+  if (event.amount &gt; 1000) {
+    return processorConfigs.highVolume;
+  }
+
+  // Route based on card type
+  if (cardType === &#39;amex&#39;) {
+    return processorConfigs.amexProcessor;
+  }
+
+  // Default to Propay
+  return processorConfigs.lightsfest;
+}
+</code></pre>
+<h2>Styling Payvia Checkout</h2>
+<h3>Custom iFrame Styles</h3>
+<pre><code class="language-javascript">const customStyles = {
+  base: `
+    font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+    font-size: 16px;
+    color: #1a1a1a;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+  `,
+  focus: `
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  `,
+  error: `
+    border-color: #dc2626;
+    color: #dc2626;
+  `,
+  valid: `
+    border-color: #16a34a;
+  `,
+  cardIcon: `
+    width: 32px;
+    height: 20px;
+  `,
+  cvvIcon: `
+    width: 24px;
+    height: 16px;
+  `,
+};
+</code></pre>
+<h3>Modal Styling</h3>
+<pre><code class="language-css">.payvia-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 32px;
+  max-width: 480px;
+  width: 90%;
+  z-index: 1000;
+}
+
+.payvia-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+</code></pre>
+<h2>Error Handling</h2>
+<h3>Tokenex Errors</h3>
+<pre><code class="language-typescript">const tokenexErrors = {
+  &#39;Invalid Token&#39;: &#39;Card information is invalid. Please check and try again.&#39;,
+  &#39;Expired Token&#39;: &#39;Session expired. Please refresh and try again.&#39;,
+  &#39;Gateway Timeout&#39;: &#39;Payment processor is unavailable. Please try again.&#39;,
+  &#39;Insufficient Funds&#39;: &#39;Card has insufficient funds.&#39;,
+  &#39;Card Declined&#39;: &#39;Card was declined. Please try a different card.&#39;,
+  &#39;Invalid CVV&#39;: &#39;Security code is incorrect.&#39;,
+  &#39;Invalid Expiration&#39;: &#39;Expiration date is invalid.&#39;,
+};
+</code></pre>
+<h3>Graceful Degradation</h3>
+<pre><code class="language-typescript">// Fallback to direct integration if Tokenex unavailable
+async function attemptPayment() {
+  try {
+    // Try Tokenex first
+    return await processWithTokenex();
+  } catch (error) {
+    if (error.code === &#39;TOKENEX_UNAVAILABLE&#39;) {
+      console.warn(&#39;Tokenex unavailable, using direct integration&#39;);
+      return await processWithDigitzsDirect();
+    }
+    throw error;
+  }
+}
+</code></pre>
+<h2>Testing Payvia Wrapper</h2>
+<h3>Test Mode Toggle</h3>
+<pre><code class="language-typescript">const PAYVIA_TEST_MODE = import.meta.env.VITE_PAYVIA_TEST_MODE === &#39;true&#39;;
+
+if (PAYVIA_TEST_MODE) {
+  // Use Tokenex sandbox
+  TOKENEX_ID = &#39;test_tokenex_id&#39;;
+  TOKENEX_API_KEY = &#39;test_api_key&#39;;
+
+  // Use test MID
+  MERCHANT_ID = &#39;test_merchant_id&#39;;
+}
+</code></pre>
+<h3>Test Scenarios</h3>
+<pre><code class="language-typescript">// Test successful payment
+await testPayment({
+  card: &#39;4111111111111111&#39;,
+  expected: &#39;success&#39;,
+});
+
+// Test declined payment
+await testPayment({
+  card: &#39;4000300011112220&#39;,
+  expected: &#39;declined&#39;,
+});
+
+// Test insufficient funds
+await testPayment({
+  card: &#39;4000000000000002&#39;,
+  expected: &#39;insufficient_funds&#39;,
+});
+
+// Test network error
+await testPayment({
+  card: &#39;4111111111111111&#39;,
+  simulateNetworkError: true,
+  expected: &#39;network_error&#39;,
+});
+</code></pre>
+<h2>Webhook Integration</h2>
+<h3>Tokenex Webhooks</h3>
+<pre><code class="language-typescript">// supabase/functions/tokenex-webhook/index.ts
+Deno.serve(async (req) =&gt; {
+  const signature = req.headers.get(&#39;tx-signature&#39;);
+  const body = await req.text();
+
+  // Verify signature
+  if (!verifyWebhookSignature(body, signature)) {
+    return new Response(&#39;Invalid signature&#39;, { status: 401 });
+  }
+
+  const event = JSON.parse(body);
+
+  switch (event.type) {
+    case &#39;transaction.success&#39;:
+      await handleSuccessfulTransaction(event.data);
+      break;
+    case &#39;transaction.failed&#39;:
+      await handleFailedTransaction(event.data);
+      break;
+    case &#39;chargeback.created&#39;:
+      await handleChargeback(event.data);
+      break;
+  }
+
+  return new Response(&#39;OK&#39;);
+});
+</code></pre>
+<h2>Advantages of Payvia Wrapper</h2>
+<ol>
+<li><strong>Processor Agnostic</strong>: Switch processors without changing frontend code</li>
+<li><strong>PCI Compliant</strong>: Tokenex handles card data securely</li>
+<li><strong>200+ Processors</strong>: Access to vast processor network</li>
+<li><strong>Consistent API</strong>: Same interface regardless of backend</li>
+<li><strong>Reduced Risk</strong>: Tokenex manages processor relationships</li>
+<li><strong>Easy Testing</strong>: Sandbox mode for all processors</li>
+<li><strong>Advanced Routing</strong>: Route based on card type, amount, etc.</li>
+<li><strong>Fraud Tools</strong>: Built-in fraud detection and 3D Secure</li>
+</ol>
+<h2>Disadvantages / Considerations</h2>
+<ol>
+<li><strong>Cost</strong>: Monthly Tokenex fees + processor fees</li>
+<li><strong>Dependency</strong>: Relies on Tokenex uptime</li>
+<li><strong>Complexity</strong>: Additional layer in payment stack</li>
+<li><strong>Debugging</strong>: Harder to troubleshoot with extra hop</li>
+<li><strong>Billing Issues</strong>: As experienced with recent deactivation</li>
+</ol>
+<h2>Recovery Plan Summary</h2>
+<ol>
+<li><strong>Immediate</strong>: Use direct Digitzs integration (implemented)</li>
+<li><strong>Short Term</strong>: Resolve Tokenex billing issue</li>
+<li><strong>Long Term</strong>: Maintain both integrations with feature flag</li>
+<li><strong>Future</strong>: Consider building own multi-processor router</li>
+</ol>
+<h2>Next Steps When Tokenex Reactivates</h2>
+<ol>
+<li>Verify account access</li>
+<li>Check MID configurations still exist</li>
+<li>Test in sandbox environment</li>
+<li>Update API keys if changed</li>
+<li>Test end-to-end flow</li>
+<li>Monitor first transactions closely</li>
+<li>Keep direct integration as backup</li>
+</ol>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>

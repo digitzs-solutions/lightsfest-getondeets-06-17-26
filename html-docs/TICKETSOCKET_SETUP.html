@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TICKETSOCKET_SETUP</title>
+  <style>
+    @media print {
+      @page {
+        margin: 20mm;
+      }
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #ffffff;
+    }
+
+    h1 {
+      color: #1a202c;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 40px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #3b82f6;
+      page-break-after: avoid;
+    }
+
+    h1:first-child {
+      margin-top: 0;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 2em;
+      font-weight: 600;
+      margin: 35px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #60a5fa;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #4a5568;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 25px 0 12px 0;
+      page-break-after: avoid;
+    }
+
+    h4 {
+      color: #718096;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin: 15px 0;
+      text-align: justify;
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+
+    code {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #e53e3e;
+    }
+
+    pre {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #a0aec0;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      border-left: 5px solid #3b82f6;
+      padding: 15px 20px;
+      margin: 20px 0;
+      background: #eff6ff;
+      border-radius: 0 8px 8px 0;
+      color: #1e40af;
+      font-style: italic;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 35px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    li > ul, li > ol {
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #3b82f6;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+    }
+
+    td {
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    tr:hover {
+      background: #eff6ff;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid #e2e8f0;
+      margin: 40px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    strong {
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    em {
+      font-style: italic;
+      color: #4a5568;
+    }
+
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .print-button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      .print-button {
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <h1>TicketSocket Integration Setup</h1>
+<h2>Overview</h2>
+<p>The LightsFest website is now integrated with TicketSocket API v2 for ticket sales and payment processing. The integration uses a secure Edge Function to handle API calls to the TicketSocket merchant account at Digitzs.</p>
+<h2>Credentials Configured</h2>
+<p>The following credentials have been configured:</p>
+<ul>
+<li><strong>API URL</strong>: <code>https://clevergroup.tscheckout.com/api/v2</code></li>
+<li><strong>Merchant ID</strong>: <code>ticketso-clevergroup-33595002-4398786-1724692895</code></li>
+<li><strong>Username</strong>: <code>Laura@digitzs.com</code></li>
+<li><strong>Admin Portal</strong>: <a href="https://clevergroup.tscheckout.com/admin/">https://clevergroup.tscheckout.com/admin/</a></li>
+</ul>
+<h2>How It Works</h2>
+<h3>Authentication</h3>
+<p>The Edge Function authenticates with TicketSocket using username/password credentials:</p>
+<ol>
+<li>Calls <code>/auth/login</code> endpoint to obtain an access token</li>
+<li>Uses the token for all subsequent API requests</li>
+<li>Authentication happens automatically for each request</li>
+</ol>
+<h3>Registration Flow</h3>
+<ol>
+<li><p>User fills out the registration form with:</p>
+<ul>
+<li>First and last name</li>
+<li>Email address</li>
+<li>Phone number (optional)</li>
+<li>Number of tickets</li>
+</ul>
+</li>
+<li><p>When the form is submitted:</p>
+<ul>
+<li>The frontend calls the TicketSocket Edge Function</li>
+<li>The Edge Function authenticates with TicketSocket API v2</li>
+<li>Creates an order in TicketSocket with merchant ID and customer details</li>
+<li>The registration is saved to the Supabase database with the TicketSocket order ID</li>
+<li>If TicketSocket returns a checkout URL, the user is redirected to complete payment</li>
+</ul>
+</li>
+<li><p>The registration record includes:</p>
+<ul>
+<li>Customer information</li>
+<li>Event details</li>
+<li>TicketSocket order ID</li>
+<li>Order status (pending, completed, failed, refunded)</li>
+</ul>
+</li>
+</ol>
+<h3>Edge Function Endpoints</h3>
+<p>The TicketSocket Edge Function provides three endpoints:</p>
+<h4>1. Create Order</h4>
+<p><strong>POST</strong> <code>/functions/v1/ticketsocket/create-order</code></p>
+<p>Creates a new ticket order in TicketSocket API v2.</p>
+<p><strong>Request Body:</strong></p>
+<pre><code class="language-json">{
+  &quot;eventId&quot;: &quot;event-id&quot;,
+  &quot;firstName&quot;: &quot;John&quot;,
+  &quot;lastName&quot;: &quot;Doe&quot;,
+  &quot;email&quot;: &quot;john@example.com&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;,
+  &quot;ticketQuantity&quot;: 2,
+  &quot;eventTitle&quot;: &quot;Holiday Light Show&quot;,
+  &quot;eventDate&quot;: &quot;2024-12-25&quot;
+}
+</code></pre>
+<p><strong>TicketSocket API Payload:</strong></p>
+<pre><code class="language-json">{
+  &quot;merchant_id&quot;: &quot;ticketso-clevergroup-33595002-4398786-1724692895&quot;,
+  &quot;customer&quot;: {
+    &quot;first_name&quot;: &quot;John&quot;,
+    &quot;last_name&quot;: &quot;Doe&quot;,
+    &quot;email&quot;: &quot;john@example.com&quot;,
+    &quot;phone&quot;: &quot;+1234567890&quot;
+  },
+  &quot;items&quot;: [
+    {
+      &quot;event_id&quot;: &quot;event-id&quot;,
+      &quot;quantity&quot;: 2
+    }
+  ]
+}
+</code></pre>
+<h4>2. Get Events</h4>
+<p><strong>GET</strong> <code>/functions/v1/ticketsocket/events</code>
+<strong>GET</strong> <code>/functions/v1/ticketsocket/events?id=event-id</code></p>
+<p>Fetches event information from TicketSocket for the configured merchant.</p>
+<h4>3. Get Order Status</h4>
+<p><strong>GET</strong> <code>/functions/v1/ticketsocket/order-status?order_id=order-id</code></p>
+<p>Retrieves the current status of an order.</p>
+<h2>Database Schema</h2>
+<p>The <code>registrations</code> table includes:</p>
+<ul>
+<li><code>ticketsocket_order_id</code> (text) - Stores the TicketSocket order ID</li>
+<li><code>order_status</code> (text) - Tracks order status (default: &#39;pending&#39;)</li>
+<li>Index on <code>ticketsocket_order_id</code> for fast lookups</li>
+</ul>
+<h2>Security</h2>
+<ul>
+<li>All API calls to TicketSocket are made server-side through the Edge Function</li>
+<li>API credentials (username/password) are never exposed to the frontend</li>
+<li>Authentication tokens are obtained dynamically for each request</li>
+<li>The Edge Function is configured as a public endpoint (verify_jwt: false) to allow direct ticket purchases without user authentication</li>
+<li>Credentials are stored in Supabase Edge Function secrets</li>
+</ul>
+<h2>Environment Variables</h2>
+<p>The following environment variables are configured in Supabase:</p>
+<ul>
+<li><code>TICKETSOCKET_API_URL</code> - API endpoint (v2)</li>
+<li><code>TICKETSOCKET_MERCHANT_ID</code> - Merchant identifier</li>
+<li><code>TICKETSOCKET_USERNAME</code> - API username</li>
+<li><code>TICKETSOCKET_PASSWORD</code> - API password</li>
+</ul>
+<h2>Testing</h2>
+<p>To test the integration:</p>
+<ol>
+<li>Visit the LightsFest website</li>
+<li>Click &quot;Register&quot; on any event</li>
+<li>Fill out the registration form</li>
+<li>Submit the form</li>
+<li>The system will:<ul>
+<li>Authenticate with TicketSocket</li>
+<li>Create an order</li>
+<li>Save registration to database</li>
+<li>Redirect to checkout if a payment URL is provided</li>
+</ul>
+</li>
+</ol>
+<h2>Troubleshooting</h2>
+<p>If you encounter errors:</p>
+<ol>
+<li>Check Edge Function logs in Supabase Dashboard</li>
+<li>Verify credentials are correct in the admin portal</li>
+<li>Ensure the event IDs match between your database and TicketSocket</li>
+<li>Check that the API v2 endpoint is accessible</li>
+<li>Review authentication response for token issues</li>
+</ol>
+<h2>API Documentation</h2>
+<ul>
+<li><strong>TicketSocket API v2 Docs</strong>: <a href="https://clevergroup.tscheckout.com/api/v2/docs">https://clevergroup.tscheckout.com/api/v2/docs</a></li>
+<li><strong>Admin Portal</strong>: <a href="https://clevergroup.tscheckout.com/admin/">https://clevergroup.tscheckout.com/admin/</a></li>
+</ul>
+<h2>Files Modified/Created</h2>
+<ul>
+<li><code>/supabase/functions/ticketsocket/index.ts</code> - Edge Function for TicketSocket API v2</li>
+<li><code>/src/services/ticketsocket.ts</code> - Frontend service utilities</li>
+<li><code>/src/components/RegistrationModal.tsx</code> - Updated registration flow</li>
+<li>Database migration: <code>add_ticketsocket_fields_to_registrations.sql</code></li>
+<li><code>.env</code> - Local development credentials (not deployed)</li>
+</ul>
+
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if (window.location.search.includes('print=true')) {
+      window.print();
+    }
+  </script>
+</body>
+</html>
