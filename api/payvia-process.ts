@@ -1,9 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // PayVia SDK equivalent - mirrors @digitzs/payvia interface
-// When the SDK is installable, replace with:
-// import { getPayViaClient, buildPaymentMethodData } from '@digitzs/payvia';
-
 const PAYVIA_API_URLS: Record<string, string> = {
   staging: 'https://api.payvia.staging.ondeets.ai',
   production: 'https://api.payvia.ondeets.ai',
@@ -12,19 +9,32 @@ const PAYVIA_API_URLS: Record<string, string> = {
 const TOKEN_CACHE_TTL = 55 * 60 * 1000;
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
-function buildPaymentMethodData(token: string, expiry: string, cardholderName: string) {
+function parseExpirationDate(expiry: string): { expirationMonth: string; expirationYear: string } {
   const cleanDate = expiry.replace('/', '');
   const expirationMonth = cleanDate.substring(0, 2) || '01';
   const expirationYear = cleanDate.length >= 4
-    ? cleanDate.substring(2, 6)
-    : `20${cleanDate.substring(2, 4)}`;
+    ? cleanDate.substring(0, 4).startsWith('20') ? cleanDate.substring(0, 4) : `20${cleanDate.substring(2, 4)}`
+    : `20${cleanDate.substring(2, 4) || '99'}`;
+  return { expirationMonth, expirationYear };
+}
 
+function buildPaymentMethodData(token: string, expiry: string, cardholderName: string) {
+  const { expirationMonth, expirationYear } = parseExpirationDate(expiry);
   return {
     type: 'card' as const,
     token,
     expirationMonth,
     expirationYear,
     cardholderName,
+  };
+}
+
+function parseCardholderName(fullName: string): { firstName: string; lastName: string } {
+  const trimmed = fullName.trim();
+  const [first, ...lastParts] = trimmed.split(' ');
+  return {
+    firstName: first || 'Unknown',
+    lastName: lastParts.join(' ') || 'Customer',
   };
 }
 
@@ -57,14 +67,13 @@ function getPayViaClient() {
     return token;
   }
 
-  interface ProcessPaymentParams {
+  async function processPayment(params: {
     amount: number;
     orderId: string;
     customerInfo: {
       firstName: string;
       lastName: string;
       email: string;
-      phone?: string;
       billingAddress: {
         address1: string;
         city: string;
@@ -74,9 +83,7 @@ function getPayViaClient() {
       };
     };
     paymentMethodData: ReturnType<typeof buildPaymentMethodData>;
-  }
-
-  async function processPayment(params: ProcessPaymentParams) {
+  }) {
     const authToken = await getAuthToken();
 
     const response = await fetch(`${API_URL}/v4/payments`, {
@@ -142,27 +149,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const paymentMethodData = buildPaymentMethodData(
       token,
-      expiry || '',
+      expiry || '12/99',
       cardholderName || 'Customer'
     );
+
+    const { firstName: billingFirstName, lastName: billingLastName } =
+      parseCardholderName(cardholderName || `${customerInfo?.firstName || ''} ${customerInfo?.lastName || ''}`);
 
     const result = await client.processPayment({
       amount,
       orderId: orderId || `ORD-${Date.now()}`,
-      customerInfo: customerInfo || {
-        firstName: 'Customer',
-        lastName: '',
-        email: '',
-        phone: '',
-        billingAddress: { address1: 'Not Provided', city: 'Not Provided', state: 'NY', zip: '00000', country: 'US' },
+      customerInfo: {
+        firstName: customerInfo?.firstName || billingFirstName,
+        lastName: customerInfo?.lastName || billingLastName,
+        email: customerInfo?.email || '',
+        billingAddress: customerInfo?.billingAddress || {
+          address1: 'Not Provided',
+          city: 'Not Provided',
+          state: 'NY',
+          zip: '00000',
+          country: 'US',
+        },
       },
       paymentMethodData,
     });
 
+    // Check for errors in the PayVia response (per SDK docs)
+    if (result.errors && result.errors.length > 0) {
+      const error = result.errors[0];
+      return res.status(400).json({
+        success: false,
+        error: error.detail || error.title || 'Payment failed',
+        code: error.code || 'payment_failed',
+      });
+    }
+
+    if (!result.data || result.data.type !== 'payments') {
+      return res.status(400).json({ success: false, error: 'Payment processing error' });
+    }
+
     return res.status(200).json({
       success: true,
-      transactionId: result.data?.id || null,
-      status: result.data?.attributes?.status || 'completed',
+      transactionId: result.data.id || null,
+      status: result.data.attributes?.status || 'completed',
       amount,
       paymentMethod: 'card',
       gateway: result.meta?.gateway || 'nmi',

@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Sparkles, MapPin, Calendar, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, CreditCard, Minus, Plus } from 'lucide-react';
 
+// PayVia Hosted Checkout - matches @digitzs/payvia SDK constants
 const PAYVIA_CHECKOUT_URLS: Record<string, string> = {
-  staging: 'https://checkout.payvia.staging.ondeets.ai',
-  production: 'https://checkout.payvia.ondeets.ai',
+  staging: 'https://checkout.staging.digitzs.com',
+  production: 'https://checkout.digitzs.com',
 };
 
-const PAYVIA_ALLOWED_ORIGINS: string[] = [
-  'https://checkout.payvia.staging.ondeets.ai',
-  'https://checkout.payvia.ondeets.ai',
+const PAYVIA_ALLOWED_ORIGINS = [
+  'https://checkout.staging.digitzs.com',
+  'https://checkout.digitzs.com',
 ];
 
+const PAYVIA_ENVIRONMENT = import.meta.env.VITE_PAYVIA_ENVIRONMENT || 'production';
 const PAYVIA_MERCHANT_ID = import.meta.env.VITE_PAYVIA_MERCHANT_ID || '';
-const PAYVIA_ENVIRONMENT = import.meta.env.VITE_PAYVIA_ENVIRONMENT || 'staging';
 
 interface EventItem {
   id: string;
@@ -37,15 +38,28 @@ interface TicketType {
 
 interface TokenCreatedData {
   token: string;
-  expiry: string;
-  cardholderName: string;
+  amount: number;
+  invoice: string;
+  merchantId: string;
+  tokenData?: {
+    firstSix: string;
+    lastFour: string;
+    token: string;
+    referenceNumber: string;
+    tokenHMAC: string;
+    cvvIncluded: boolean;
+    cardType: string;
+  };
+  paymentMethod?: string;
+  form: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    cardHolderName?: string;
+    expiry?: string;
+    zipCode?: string;
+  };
 }
-
-type PayViaPostMessage =
-  | { type: 'digitzs:token-created'; data: TokenCreatedData }
-  | { type: 'digitzs:checkout-ready' }
-  | { type: 'digitzs:checkout-error'; data: { message: string } }
-  | { type: 'digitzs:checkout-resize'; data: { height: number } };
 
 const EVENTS: EventItem[] = [
   {
@@ -525,8 +539,9 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
   const [transactionId, setTransactionId] = useState('');
 
   const [iframeReady, setIframeReady] = useState(false);
-  const [iframeHeight, setIframeHeight] = useState(280);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const configSentRef = useRef(false);
+  const tokenProcessedRef = useRef(false);
 
   const selectedTicketType = ticketTypes.find(t => t.id === ticketTypeId) || ticketTypes[0];
   const totalAmount = (selectedTicketType?.price || event.price) * quantity;
@@ -554,33 +569,82 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     fetchTicketTypes();
   }, [event]);
 
-  // Listen for PayVia postMessage events
+  // PayVia checkout iframe postMessage handler
   useEffect(() => {
     if (step !== 'payment') return;
 
-    function handleMessage(ev: MessageEvent) {
-      if (!PAYVIA_ALLOWED_ORIGINS.includes(ev.origin)) return;
+    const checkoutUrl = PAYVIA_CHECKOUT_URLS[PAYVIA_ENVIRONMENT];
 
-      const msg = ev.data as PayViaPostMessage;
-      switch (msg.type) {
-        case 'digitzs:checkout-ready':
+    function sendCheckoutConfig() {
+      if (!iframeRef.current?.contentWindow || configSentRef.current) return;
+
+      const invoiceNumber = `LF-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: 'digitzs:init-checkout',
+          config: {
+            amount: totalAmount,
+            merchantId: PAYVIA_MERCHANT_ID,
+            email,
+            cardHolderName: `${firstName} ${lastName}`,
+            invoice: invoiceNumber,
+            isZipCodeEnabled: true,
+            isEmailEnabled: false,
+            defaultPaymentMethod: 'card',
+            styles: {
+              backgroundColor: 'transparent',
+              buttonColor: '#f59e0b',
+              buttonTextColor: '#ffffff',
+              inputBorderColor: '#e2e8f0',
+              borderRadius: '12px',
+              fontSize: '14px',
+            },
+          },
+        },
+        checkoutUrl
+      );
+      configSentRef.current = true;
+    }
+
+    function handleMessage(event: MessageEvent) {
+      if (!PAYVIA_ALLOWED_ORIGINS.includes(event.origin)) return;
+
+      const message = event.data;
+      switch (message.type) {
+        case 'digitzs:ready':
           setIframeReady(true);
+          setError('');
+          sendCheckoutConfig();
           break;
+
         case 'digitzs:token-created':
-          processPayment(msg.data);
+          if (tokenProcessedRef.current) return;
+          tokenProcessedRef.current = true;
+          processPayment(message.data);
           break;
-        case 'digitzs:checkout-error':
-          setError(msg.data.message || 'Payment form error');
+
+        case 'digitzs:error':
+          setError(message.error?.message || 'Payment error occurred');
           break;
-        case 'digitzs:checkout-resize':
-          if (msg.data.height > 0) setIframeHeight(msg.data.height);
+
+        case 'digitzs:resize':
+          if (iframeRef.current && message.height > 0) {
+            iframeRef.current.style.height = `${message.height}px`;
+          }
+          break;
+
+        case 'digitzs:validation-error':
           break;
       }
     }
 
     window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [step, firstName, lastName, email, phone, quantity, ticketTypeId]);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      configSentRef.current = false;
+      tokenProcessedRef.current = false;
+    };
+  }, [step, totalAmount, email, firstName, lastName]);
 
   const handleTicketsSubmit = () => {
     if (quantity < 1) {
@@ -608,16 +672,15 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     setStep('processing');
     setError('');
     try {
-      const newOrderId = `LF-${Date.now()}`;
       const res = await fetch('/api/payvia-process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           token: tokenData.token,
           amount: totalAmount,
-          orderId: newOrderId,
-          expiry: tokenData.expiry,
-          cardholderName: tokenData.cardholderName,
+          orderId: tokenData.invoice,
+          expiry: tokenData.form.expiry || '12/99',
+          cardholderName: tokenData.form.cardHolderName || `${firstName} ${lastName}`,
           customerInfo: {
             firstName,
             lastName,
@@ -627,7 +690,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
               address1: 'Not Provided',
               city: event.city,
               state: event.state,
-              zip: '00000',
+              zip: tokenData.form.zipCode || '00000',
               country: 'US',
             },
           },
@@ -638,7 +701,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
         throw new Error(result.error || 'Payment failed');
       }
 
-      setOrderId(newOrderId);
+      setOrderId(tokenData.invoice);
       setTransactionId(result.transactionId || '');
 
       // Create order in TicketSocket (CRM record + ticket fulfillment)
@@ -661,8 +724,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       setStep('error');
     }
   }, [totalAmount, firstName, lastName, email, phone, event, quantity, ticketTypeId]);
-
-  const payViaIframeSrc = `${PAYVIA_CHECKOUT_URLS[PAYVIA_ENVIRONMENT] || PAYVIA_CHECKOUT_URLS.production}?merchantId=${encodeURIComponent(PAYVIA_MERCHANT_ID)}`;
 
   return (
     <div
@@ -834,30 +895,26 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Step 3: PayVia Payment Iframe */}
+          {/* Step 3: Payment via PayVia Hosted Checkout */}
           {step === 'payment' && (
             <div className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">
-                  <CreditCard className="w-3 h-3 inline mr-1" />
-                  Card Details
-                </label>
-                <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
-                  {!iframeReady && (
-                    <div className="flex items-center justify-center gap-2 py-8 text-xs text-slate-400">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Loading secure payment form...
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white">
+                {!iframeReady && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+                      <span className="text-xs text-slate-400">Loading secure payment form...</span>
                     </div>
-                  )}
-                  <iframe
-                    ref={iframeRef}
-                    src={payViaIframeSrc}
-                    title="PayVia Secure Checkout"
-                    className={`w-full border-0 transition-opacity ${iframeReady ? 'opacity-100' : 'opacity-0 h-0'}`}
-                    style={{ height: iframeReady ? `${iframeHeight}px` : 0 }}
-                    allow="payment"
-                  />
-                </div>
+                  </div>
+                )}
+                <iframe
+                  ref={iframeRef}
+                  src={PAYVIA_CHECKOUT_URLS[PAYVIA_ENVIRONMENT]}
+                  title="PayVia Secure Checkout"
+                  className="w-full border-0"
+                  style={{ height: '480px', minHeight: '400px' }}
+                  allow="payment"
+                />
               </div>
 
               <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
@@ -865,7 +922,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
                 PCI DSS 4.0 Level 1 &middot; PayVia Secured &middot; Card data never touches our servers
               </div>
               <button
-                onClick={() => { setStep('contact'); setError(''); }}
+                onClick={() => { setStep('contact'); setError(''); setIframeReady(false); configSentRef.current = false; }}
                 className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-slate-300 transition-all"
               >
                 Back
