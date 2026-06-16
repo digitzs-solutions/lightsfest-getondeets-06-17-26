@@ -249,6 +249,39 @@ function Hero() {
 }
 
 function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void }) {
+  const [events, setEvents] = useState<EventItem[]>(EVENTS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await fetch('/api/ticketsocket-proxy?action=events');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const liveEvents: EventItem[] = data.data.map((ev: any) => ({
+            id: `ts-${ev.id}`,
+            title: ev.name || 'The Lights Fest',
+            city: ev.venue?.city || ev.city || '',
+            state: ev.venue?.state || ev.state || '',
+            date: ev.start || ev.startDate || '',
+            dateLabel: ev.start ? new Date(ev.start).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+            venue: ev.venue?.name || ev.venueName || '',
+            price: ev.minPrice || ev.price || 1.00,
+            image: ev.imageUrl || ev.image || 'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=800',
+            registrationUrl: ev.url || '',
+            ticketSocketEventId: String(ev.id),
+          }));
+          setEvents(liveEvents);
+        }
+      } catch {
+        // keep hardcoded fallback
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+  }, []);
+
   return (
     <section id="events" className="py-24 px-5 sm:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
@@ -266,7 +299,11 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {EVENTS.map((event) => (
+          {loading ? (
+            <div className="col-span-full flex items-center justify-center py-12">
+              <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+            </div>
+          ) : events.map((event) => (
             <div
               key={event.id}
               className="group bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1"
