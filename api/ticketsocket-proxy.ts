@@ -2,7 +2,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const API_BASE = 'https://clevergroup.tscheckout.com/api/v1';
 
+let cachedAuth: { token: string; expiresAt: number } | null = null;
+
 async function getAuthToken(): Promise<string> {
+  if (cachedAuth && cachedAuth.expiresAt > Date.now()) {
+    return cachedAuth.token;
+  }
+
   const userName = process.env.TICKETSOCKET_USERNAME || '';
   const password = process.env.TICKETSOCKET_PASSWORD || '';
 
@@ -23,6 +29,8 @@ async function getAuthToken(): Promise<string> {
 
   const token = data.data?.jwt;
   if (!token) throw new Error(`No token in response: ${JSON.stringify(data)}`);
+
+  cachedAuth = { token, expiresAt: Date.now() + 50 * 60 * 1000 };
   return token;
 }
 
@@ -36,16 +44,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { action } = req.query;
+    const { action, eventId } = req.query;
     const token = await getAuthToken();
     const commonHeaders = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
+    // List events
+    if (action === 'events') {
+      const tsResponse = await fetch(`${API_BASE}/events`, {
+        method: 'GET',
+        headers: commonHeaders,
+      });
+      const result = await tsResponse.json();
+      if (!tsResponse.ok) {
+        return res.status(tsResponse.status).json({ success: false, error: 'Failed to fetch events', details: result });
+      }
+      return res.status(200).json({ success: true, data: result.data || result });
+    }
+
+    // Get ticket types for an event
+    if (action === 'ticket-types') {
+      const eid = eventId || '';
+      if (!eid) {
+        return res.status(200).json({ success: true, data: [] });
+      }
+      const tsResponse = await fetch(`${API_BASE}/events/${eid}/ticket-types`, {
+        method: 'GET',
+        headers: commonHeaders,
+      });
+      const result = await tsResponse.json();
+      if (!tsResponse.ok) {
+        return res.status(200).json({ success: true, data: [] });
+      }
+      return res.status(200).json({ success: true, data: result.data || result });
+    }
+
+    // Describe order (pricing preview)
+    if (action === 'describe-order' && req.method === 'POST') {
+      const { tickets = [], fees = [] } = req.body;
+      const tsResponse = await fetch(`${API_BASE}/orders/describe`, {
+        method: 'POST',
+        headers: commonHeaders,
+        body: JSON.stringify({ tickets, fees }),
+      });
+      const result = await tsResponse.json();
+      return res.status(tsResponse.ok ? 200 : 400).json({
+        success: tsResponse.ok,
+        data: result.data || result,
+      });
+    }
+
+    // Create order (CRM record + ticket fulfillment)
     if (action === 'create-order' && req.method === 'POST') {
       const orderData = req.body;
       const tickets = [];
       const qty = orderData.ticketQuantity || 1;
-      const ticketTypeId = orderData.ticketTypeId || 1;
-      for (let i = 0; i < qty; i++) tickets.push({ ticketTypeId });
+      const ticketType = orderData.ticketTypeId || 1;
+      for (let i = 0; i < qty; i++) tickets.push({ ticketTypeId: ticketType });
 
       const orderPayload = {
         emailReceipt: 1,
@@ -77,12 +131,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       return res.status(200).json({
         success: true,
-        data: { order_id: result.data?.orderId || result.data?.id || null, status: 'completed', details: result.data },
+        data: {
+          order_id: result.data?.orderId || result.data?.id || null,
+          status: 'completed',
+          details: result.data,
+        },
       });
     }
 
-    return res.status(400).json({ error: 'Invalid action', available: ['POST /api/ticketsocket-proxy?action=create-order'] });
+    return res.status(400).json({
+      error: 'Invalid action',
+      available: ['events', 'ticket-types', 'describe-order', 'create-order'],
+    });
   } catch (error) {
-    return res.status(500).json({ error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }

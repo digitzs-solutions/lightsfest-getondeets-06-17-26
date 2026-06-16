@@ -1,9 +1,18 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Sparkles, MapPin, Calendar, X, Lock, Mail, Shield, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, CreditCard } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Sparkles, MapPin, Calendar, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, CreditCard, Minus, Plus } from 'lucide-react';
 
-const TOKENEX_IFRAME_SRC = 'https://htp.tokenex.com/iframe/iframe-v3.min.js';
-const TOKENEX_ORIGIN = 'https://getondeets.ai';
-const TOKENEX_SCHEME = 'sixFourAndToken';
+const PAYVIA_CHECKOUT_URLS: Record<string, string> = {
+  staging: 'https://checkout.payvia.staging.ondeets.ai',
+  production: 'https://checkout.payvia.ondeets.ai',
+};
+
+const PAYVIA_ALLOWED_ORIGINS: string[] = [
+  'https://checkout.payvia.staging.ondeets.ai',
+  'https://checkout.payvia.ondeets.ai',
+];
+
+const PAYVIA_MERCHANT_ID = import.meta.env.VITE_PAYVIA_MERCHANT_ID || '';
+const PAYVIA_ENVIRONMENT = import.meta.env.VITE_PAYVIA_ENVIRONMENT || 'staging';
 
 interface EventItem {
   id: string;
@@ -16,7 +25,27 @@ interface EventItem {
   price: number;
   image: string;
   registrationUrl: string;
+  ticketSocketEventId?: string;
 }
+
+interface TicketType {
+  id: number;
+  name: string;
+  price: number;
+  available: boolean;
+}
+
+interface TokenCreatedData {
+  token: string;
+  expiry: string;
+  cardholderName: string;
+}
+
+type PayViaPostMessage =
+  | { type: 'digitzs:token-created'; data: TokenCreatedData }
+  | { type: 'digitzs:checkout-ready' }
+  | { type: 'digitzs:checkout-error'; data: { message: string } }
+  | { type: 'digitzs:checkout-resize'; data: { height: number } };
 
 const EVENTS: EventItem[] = [
   {
@@ -84,7 +113,7 @@ export default function App() {
       <Footer />
 
       {checkoutEvent && (
-        <LiveCheckoutModal
+        <CheckoutModal
           event={checkoutEvent}
           onClose={() => setCheckoutEvent(null)}
         />
@@ -206,33 +235,6 @@ function Hero() {
 }
 
 function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void }) {
-  const [liveEvents, setLiveEvents] = useState<EventItem[]>(EVENTS);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchEvents() {
-      try {
-        const res = await fetch('/api/ticketsocket-proxy?action=events', {
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const data = await res.json();
-        if (data.success !== false && Array.isArray(data.data)) {
-          const mapped = data.data.slice(0, 4).map((ev: any, i: number) => ({
-            ...EVENTS[i],
-            title: ev.title || EVENTS[i].title,
-            venue: ev.venue || EVENTS[i].venue,
-          }));
-          if (mapped.length > 0) setLiveEvents(mapped);
-        }
-      } catch {
-        // fallback to static events
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchEvents();
-  }, []);
-
   return (
     <section id="events" className="py-24 px-5 sm:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
@@ -250,7 +252,7 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {liveEvents.map((event) => (
+          {EVENTS.map((event) => (
             <div
               key={event.id}
               className="group bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1"
@@ -298,13 +300,6 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
             </div>
           ))}
         </div>
-
-        {loading && (
-          <div className="flex items-center justify-center gap-2 mt-8 text-xs text-slate-400">
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            Loading events from TicketSocket...
-          </div>
-        )}
       </div>
     </section>
   );
@@ -500,8 +495,8 @@ function Footer() {
             &copy; {new Date().getFullYear()} The Lights Festival LLC. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-[10px] text-slate-600">
-            <Shield className="w-3 h-3" />
-            PCI DSS Level 1 Compliant
+            <Lock className="w-3 h-3" />
+            PCI DSS 4.0 Level 1 Compliant
           </div>
         </div>
       </div>
@@ -509,26 +504,96 @@ function Footer() {
   );
 }
 
-type CheckoutStep = 'contact' | 'payment' | 'processing' | 'success' | 'error';
+type CheckoutStep = 'tickets' | 'contact' | 'payment' | 'processing' | 'success' | 'error';
 
-function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () => void }) {
-  const [step, setStep] = useState<CheckoutStep>('contact');
-  const [email, setEmail] = useState('');
+function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => void }) {
+  const [step, setStep] = useState<CheckoutStep>('tickets');
+  const [quantity, setQuantity] = useState(1);
+  const [ticketTypeId, setTicketTypeId] = useState(1);
+  const [ticketTypes, setTicketTypes] = useState<TicketType[]>([
+    { id: 1, name: 'General Admission', price: event.price, available: true },
+  ]);
+  const [loadingTickets, setLoadingTickets] = useState(true);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [expiry, setExpiry] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+
   const [error, setError] = useState('');
   const [orderId, setOrderId] = useState('');
   const [transactionId, setTransactionId] = useState('');
-  const [tokenExLoaded, setTokenExLoaded] = useState(false);
-  const [tokenExReady, setTokenExReady] = useState(false);
-  const iframeInstanceRef = useRef<any>(null);
-  const cardContainerRef = useRef<HTMLDivElement>(null);
-  const cvvContainerRef = useRef<HTMLDivElement>(null);
+
+  const [iframeReady, setIframeReady] = useState(false);
+  const [iframeHeight, setIframeHeight] = useState(280);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const selectedTicketType = ticketTypes.find(t => t.id === ticketTypeId) || ticketTypes[0];
+  const totalAmount = (selectedTicketType?.price || event.price) * quantity;
+
+  useEffect(() => {
+    async function fetchTicketTypes() {
+      try {
+        const res = await fetch(`/api/ticketsocket-proxy?action=ticket-types&eventId=${event.ticketSocketEventId || ''}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setTicketTypes(data.data.map((t: any) => ({
+            id: t.id,
+            name: t.name || 'General Admission',
+            price: t.price || event.price,
+            available: t.available !== false,
+          })));
+          setTicketTypeId(data.data[0].id);
+        }
+      } catch {
+        // keep default ticket types
+      } finally {
+        setLoadingTickets(false);
+      }
+    }
+    fetchTicketTypes();
+  }, [event]);
+
+  // Listen for PayVia postMessage events
+  useEffect(() => {
+    if (step !== 'payment') return;
+
+    function handleMessage(ev: MessageEvent) {
+      if (!PAYVIA_ALLOWED_ORIGINS.includes(ev.origin)) return;
+
+      const msg = ev.data as PayViaPostMessage;
+      switch (msg.type) {
+        case 'digitzs:checkout-ready':
+          setIframeReady(true);
+          break;
+        case 'digitzs:token-created':
+          processPayment(msg.data);
+          break;
+        case 'digitzs:checkout-error':
+          setError(msg.data.message || 'Payment form error');
+          break;
+        case 'digitzs:checkout-resize':
+          if (msg.data.height > 0) setIframeHeight(msg.data.height);
+          break;
+      }
+    }
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [step, firstName, lastName, email, phone, quantity, ticketTypeId]);
+
+  const handleTicketsSubmit = () => {
+    if (quantity < 1) {
+      setError('Select at least 1 ticket');
+      return;
+    }
+    setError('');
+    setStep('contact');
+  };
 
   const handleContactSubmit = () => {
     if (!email || !firstName || !lastName) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -539,129 +604,7 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
     setStep('payment');
   };
 
-  useEffect(() => {
-    if (step !== 'payment') return;
-
-    let cancelled = false;
-    let loadTimeout: ReturnType<typeof setTimeout>;
-
-    async function initTokenEx() {
-      if (!(window as any).TokenEx) {
-        const script = document.createElement('script');
-        script.src = TOKENEX_IFRAME_SRC;
-        script.async = true;
-        await new Promise<void>((resolve, reject) => {
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error('Failed to load TokenEx'));
-          document.head.appendChild(script);
-        });
-      }
-
-      if (cancelled) return;
-      setTokenExLoaded(true);
-
-      const authRes = await fetch('/api/tokenex-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ origin: TOKENEX_ORIGIN, tokenScheme: TOKENEX_SCHEME }),
-      });
-      const authData = await authRes.json();
-      if (!authRes.ok || !authData.success) {
-        setError('Failed to initialize secure payment. Please try again.');
-        return;
-      }
-
-      if (cancelled) return;
-
-      const TokenEx = (window as any).TokenEx;
-      const iframe = new TokenEx.Iframe('tokenex-card-container', {
-        pci: true,
-        tokenExID: authData.tokenExID,
-        tokenScheme: authData.tokenScheme,
-        authenticationKey: authData.authenticationKey,
-        timestamp: authData.timestamp,
-        origin: TOKENEX_ORIGIN,
-        styles: {
-          base: 'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 0 14px; color: #1e293b; font-size: 14px; line-height: 44px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;',
-          focus: 'border-color: #fbbf24; box-shadow: 0 0 0 3px rgba(251,191,36,0.1); outline: none;',
-          error: 'border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1);',
-        },
-        cvv: true,
-        cvvContainerID: 'tokenex-cvv-container',
-        cvvPlaceholder: 'CVV',
-        placeholder: '4111 1111 1111 1111',
-      });
-
-      loadTimeout = setTimeout(() => {
-        if (!cancelled && !tokenExReady) {
-          setError('Payment form timed out. Please refresh and try again.');
-        }
-      }, 10000);
-
-      iframe.on('load', () => {
-        if (!cancelled) {
-          clearTimeout(loadTimeout);
-          setTokenExReady(true);
-        }
-      });
-
-      iframe.on('tokenize', (data: any) => {
-        if (!cancelled) {
-          processPayment(data.token, expiry, `${firstName} ${lastName}`);
-        }
-      });
-
-      iframe.on('error', (data: any) => {
-        if (!cancelled) setError(data.error || 'Card validation failed');
-      });
-
-      iframe.on('validate', (data: any) => {
-        if (!data.isValid && data.isCvvValid === false) {
-          setError('Please check your card details');
-        }
-      });
-
-      iframe.load();
-      iframeInstanceRef.current = iframe;
-    }
-
-    initTokenEx().catch((err) => {
-      if (!cancelled) setError(err.message || 'Failed to load payment form');
-    });
-
-    return () => {
-      cancelled = true;
-      clearTimeout(loadTimeout);
-      if (iframeInstanceRef.current) {
-        try { iframeInstanceRef.current.remove(); } catch {}
-        iframeInstanceRef.current = null;
-      }
-    };
-  }, [step]);
-
-  const handlePaySubmit = () => {
-    if (!expiry || expiry.length < 4) {
-      setError('Please enter a valid expiry date (MM/YY)');
-      return;
-    }
-    setError('');
-    if (iframeInstanceRef.current) {
-      iframeInstanceRef.current.tokenize();
-    } else {
-      setError('Payment form not ready. Please wait or refresh.');
-    }
-  };
-
-  const handleExpiryChange = (val: string) => {
-    const cleaned = val.replace(/\D/g, '');
-    if (cleaned.length <= 2) {
-      setExpiry(cleaned);
-    } else {
-      setExpiry(`${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`);
-    }
-  };
-
-  const processPayment = useCallback(async (token: string, exp: string, cardholderName: string) => {
+  const processPayment = useCallback(async (tokenData: TokenCreatedData) => {
     setStep('processing');
     setError('');
     try {
@@ -670,29 +613,46 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          token,
-          amount: event.price,
+          token: tokenData.token,
+          amount: totalAmount,
           orderId: newOrderId,
-          expiry: exp.replace('/', ''),
-          cardholderName,
+          expiry: tokenData.expiry,
+          cardholderName: tokenData.cardholderName,
           customerInfo: {
             firstName,
             lastName,
             email,
-            billingAddress: { address1: 'Not Provided', city: event.city, state: event.state, zip: '00000', country: 'US' },
+            phone,
+            billingAddress: {
+              address1: 'Not Provided',
+              city: event.city,
+              state: event.state,
+              zip: '00000',
+              country: 'US',
+            },
           },
         }),
       });
       const result = await res.json();
-      if (!res.ok || result.success === false) throw new Error(result.error || 'Payment failed');
+      if (!res.ok || result.success === false) {
+        throw new Error(result.error || 'Payment failed');
+      }
 
       setOrderId(newOrderId);
       setTransactionId(result.transactionId || '');
 
+      // Create order in TicketSocket (CRM record + ticket fulfillment)
       fetch('/api/ticketsocket-proxy?action=create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName, lastName, ticketQuantity: 1, ticketTypeId: 1 }),
+        body: JSON.stringify({
+          email,
+          firstName,
+          lastName,
+          phone,
+          ticketQuantity: quantity,
+          ticketTypeId,
+        }),
       }).catch(() => {});
 
       setStep('success');
@@ -700,7 +660,9 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
       setError(err instanceof Error ? err.message : 'Payment failed');
       setStep('error');
     }
-  }, [event, firstName, lastName, email]);
+  }, [totalAmount, firstName, lastName, email, phone, event, quantity, ticketTypeId]);
+
+  const payViaIframeSrc = `${PAYVIA_CHECKOUT_URLS[PAYVIA_ENVIRONMENT] || PAYVIA_CHECKOUT_URLS.production}?merchantId=${encodeURIComponent(PAYVIA_MERCHANT_ID)}`;
 
   return (
     <div
@@ -708,6 +670,7 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
       onClick={(e) => { if (e.target === e.currentTarget && step !== 'processing') onClose(); }}
     >
       <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl animate-slideUp overflow-hidden max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center">
@@ -724,17 +687,43 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
           )}
         </div>
 
+        {/* Progress Steps */}
+        {step !== 'success' && step !== 'error' && (
+          <div className="px-6 pt-4">
+            <div className="flex items-center gap-1">
+              {(['tickets', 'contact', 'payment'] as const).map((s, i) => (
+                <div key={s} className="flex-1 flex items-center gap-1">
+                  <div className={`h-1 flex-1 rounded-full transition-colors ${
+                    ['tickets', 'contact', 'payment', 'processing'].indexOf(step) >= i
+                      ? 'bg-amber-400'
+                      : 'bg-slate-100'
+                  }`} />
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-1.5 text-[10px] text-slate-400">
+              <span>Tickets</span>
+              <span>Contact</span>
+              <span>Payment</span>
+            </div>
+          </div>
+        )}
+
         <div className="p-6">
+          {/* Event Info */}
           {step !== 'success' && (
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
               <div>
                 <div className="text-sm font-medium text-slate-800">{event.title}</div>
                 <div className="text-[11px] text-slate-400 mt-0.5">{event.city}, {event.state} &middot; {event.dateLabel}</div>
               </div>
-              <div className="text-xl font-bold text-slate-900">${event.price.toFixed(2)}</div>
+              {step !== 'tickets' && (
+                <div className="text-xl font-bold text-slate-900">${totalAmount.toFixed(2)}</div>
+              )}
             </div>
           )}
 
+          {/* Error Display */}
           {error && step !== 'success' && (
             <div className="flex items-center gap-2.5 p-3 mb-5 rounded-xl bg-red-50 border border-red-100">
               <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -742,84 +731,138 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
             </div>
           )}
 
+          {/* Step 1: Ticket Selection */}
+          {step === 'tickets' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Ticket Type</label>
+                {loadingTickets ? (
+                  <div className="flex items-center gap-2 text-xs text-slate-400 py-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Loading ticket types...
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {ticketTypes.filter(t => t.available).map((tt) => (
+                      <button
+                        key={tt.id}
+                        onClick={() => setTicketTypeId(tt.id)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
+                          ticketTypeId === tt.id
+                            ? 'border-amber-300 bg-amber-50/50 shadow-sm'
+                            : 'border-slate-200 hover:border-slate-300'
+                        }`}
+                      >
+                        <span className="text-sm font-medium text-slate-700">{tt.name}</span>
+                        <span className="text-sm font-bold text-slate-900">${tt.price.toFixed(2)}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Quantity</label>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="text-lg font-semibold text-slate-800 w-8 text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(Math.min(10, quantity + 1))}
+                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <span className="text-sm text-slate-500">Total</span>
+                <span className="text-xl font-bold text-slate-900">${totalAmount.toFixed(2)}</span>
+              </div>
+
+              <button
+                onClick={handleTicketsSubmit}
+                className="w-full py-3.5 rounded-xl bg-amber-500 text-white font-semibold text-sm hover:bg-amber-600 transition-all shadow-[0_4px_14px_rgba(245,158,11,0.3)] active:scale-[0.98]"
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {/* Step 2: Contact Info */}
           {step === 'contact' && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">First Name</label>
+                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">First Name *</label>
                   <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Jane" className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-50 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Last Name</label>
+                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Last Name *</label>
                   <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Smith" className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-50 transition-all" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Email *</label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-50 transition-all" />
                 </div>
               </div>
+              <div>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Phone</label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(555) 123-4567" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-50 transition-all" />
+                </div>
+              </div>
+
               <button onClick={handleContactSubmit} className="w-full py-3.5 rounded-xl bg-amber-500 text-white font-semibold text-sm hover:bg-amber-600 transition-all shadow-[0_4px_14px_rgba(245,158,11,0.3)] active:scale-[0.98] mt-2">
                 Continue to Payment
+              </button>
+              <button
+                onClick={() => { setStep('tickets'); setError(''); }}
+                className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:border-slate-300 transition-all"
+              >
+                Back
               </button>
             </div>
           )}
 
+          {/* Step 3: PayVia Payment Iframe */}
           {step === 'payment' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">
                   <CreditCard className="w-3 h-3 inline mr-1" />
-                  Card Number
+                  Card Details
                 </label>
-                <div
-                  id="tokenex-card-container"
-                  ref={cardContainerRef}
-                  className="w-full h-[48px] rounded-xl overflow-hidden"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Expiry</label>
-                  <input
-                    type="text"
-                    value={expiry}
-                    onChange={(e) => handleExpiryChange(e.target.value)}
-                    placeholder="MM/YY"
-                    maxLength={5}
-                    className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-50 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">CVV</label>
-                  <div
-                    id="tokenex-cvv-container"
-                    ref={cvvContainerRef}
-                    className="w-full h-[48px] rounded-xl overflow-hidden"
+                <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                  {!iframeReady && (
+                    <div className="flex items-center justify-center gap-2 py-8 text-xs text-slate-400">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Loading secure payment form...
+                    </div>
+                  )}
+                  <iframe
+                    ref={iframeRef}
+                    src={payViaIframeSrc}
+                    title="PayVia Secure Checkout"
+                    className={`w-full border-0 transition-opacity ${iframeReady ? 'opacity-100' : 'opacity-0 h-0'}`}
+                    style={{ height: iframeReady ? `${iframeHeight}px` : 0 }}
+                    allow="payment"
                   />
                 </div>
               </div>
-
-              {!tokenExReady && !error && (
-                <div className="flex items-center justify-center gap-2 py-2 text-xs text-slate-400">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Loading secure payment fields...
-                </div>
-              )}
-
-              <button
-                onClick={handlePaySubmit}
-                disabled={!tokenExReady}
-                className="w-full py-3.5 rounded-xl bg-amber-500 text-white font-semibold text-sm hover:bg-amber-600 transition-all shadow-[0_4px_14px_rgba(245,158,11,0.3)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Pay ${event.price.toFixed(2)}
-              </button>
 
               <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
                 <Lock className="w-2.5 h-2.5" />
-                PCI DSS 4.0 Level 1 &middot; TokenEx Secured &middot; ProPay CleverGroup &middot; Live
+                PCI DSS 4.0 Level 1 &middot; PayVia Secured &middot; Card data never touches our servers
               </div>
               <button
                 onClick={() => { setStep('contact'); setError(''); }}
@@ -830,14 +873,16 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
             </div>
           )}
 
+          {/* Processing */}
           {step === 'processing' && (
             <div className="text-center py-10">
               <Loader2 className="w-10 h-10 text-amber-500 animate-spin mx-auto mb-4" />
-              <h3 className="text-base font-semibold text-slate-800 mb-1">Processing live transaction...</h3>
-              <p className="text-xs text-slate-400">Charging via ProPay CleverGroup gateway</p>
+              <h3 className="text-base font-semibold text-slate-800 mb-1">Processing payment...</h3>
+              <p className="text-xs text-slate-400">Charging via PayVia gateway</p>
             </div>
           )}
 
+          {/* Success */}
           {step === 'success' && (
             <div className="text-center py-6">
               <div className="w-14 h-14 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -849,13 +894,15 @@ function LiveCheckoutModal({ event, onClose }: { event: EventItem; onClose: () =
                 <div className="flex justify-between text-xs"><span className="text-slate-400">Order</span><span className="font-mono font-medium text-slate-700">{orderId}</span></div>
                 {transactionId && <div className="flex justify-between text-xs"><span className="text-slate-400">Transaction</span><span className="font-mono font-medium text-slate-700">{transactionId}</span></div>}
                 <div className="flex justify-between text-xs"><span className="text-slate-400">Event</span><span className="font-medium text-slate-700">{event.city}, {event.state}</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-400">Amount</span><span className="font-bold text-emerald-600">${event.price.toFixed(2)}</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-400">Gateway</span><span className="font-medium text-slate-700">ProPay (CleverGroup)</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-400">Tickets</span><span className="font-medium text-slate-700">{quantity}x {selectedTicketType?.name}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-400">Amount</span><span className="font-bold text-emerald-600">${totalAmount.toFixed(2)}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-400">Gateway</span><span className="font-medium text-slate-700">PayVia (Digitzs)</span></div>
               </div>
               <button onClick={onClose} className="w-full py-3.5 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-all">Done</button>
             </div>
           )}
 
+          {/* Error */}
           {step === 'error' && (
             <div className="text-center py-6">
               <div className="w-14 h-14 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-5">

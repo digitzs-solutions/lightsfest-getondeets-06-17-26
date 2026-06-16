@@ -4,7 +4,6 @@
   "installCommand": "npm install",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/tokenex-auth", "destination": "/api/tokenex-auth" },
     { "source": "/api/payvia-process", "destination": "/api/payvia-process" },
     { "source": "/api/ticketsocket-proxy", "destination": "/api/ticketsocket-proxy" },
     { "source": "/(.*)", "destination": "/index.html" }
