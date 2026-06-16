@@ -7,7 +7,7 @@
     { "source": "/api/tokenex-auth", "destination": "/api/tokenex-auth" },
     { "source": "/api/payvia-process", "destination": "/api/payvia-process" },
     { "source": "/api/ticketsocket-proxy", "destination": "/api/ticketsocket-proxy" },
-    { "source": "/thelightsfest/(.*)", "destination": "/thelightsfest/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
