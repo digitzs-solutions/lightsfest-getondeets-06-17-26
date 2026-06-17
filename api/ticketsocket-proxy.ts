@@ -80,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ success: true, data: result.data || result });
     }
 
-    // Describe order (pricing preview with fees)
+    // Describe order (pricing preview) before payment
     if (action === 'describe-order' && req.method === 'POST') {
       const body = req.body;
       const tsResponse = await fetch(`${API_BASE}/orders/describe`, {
@@ -102,11 +102,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Create order after payment is verified (detachPaymentMethod: true)
+    // Matches reference: paymentMethod='credit', detachPaymentMethod=true
     if (action === 'create-order' && req.method === 'POST') {
       const orderData = req.body;
       const tickets = [];
       const qty = orderData.ticketQuantity || 1;
-      const ticketTypeId = orderData.ticketTypeId || 1;
+      const ticketTypeId = orderData.ticketTypeId;
+
+      if (!ticketTypeId) {
+        return res.status(400).json({ success: false, error: 'ticketTypeId is required' });
+      }
 
       for (let i = 0; i < qty; i++) {
         tickets.push({
@@ -118,7 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const orderPayload = {
-        paymentMethod: 'cash',
+        paymentMethod: 'credit',
         detachPaymentMethod: true,
         emailReceipt: '1',
         includeFees: 1,
@@ -126,7 +131,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           firstName: orderData.firstName,
           lastName: orderData.lastName,
           emailAddress: orderData.email,
-          phone: orderData.phone || '',
         },
         tickets,
         promoCodes: orderData.promoCode ? [{ code: orderData.promoCode }] : undefined,

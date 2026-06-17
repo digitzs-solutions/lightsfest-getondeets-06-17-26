@@ -709,6 +709,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     setStep('processing');
     setError('');
     try {
+      // Step 1: Process payment via PayVia
       const res = await fetch('/api/payvia-process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -722,7 +723,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             firstName,
             lastName,
             email,
-            phone,
             billingAddress: {
               address1: 'Not Provided',
               city: event.city,
@@ -738,29 +738,33 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
         throw new Error(result.error || 'Payment failed');
       }
 
-      setOrderId(tokenData.invoice);
       setTransactionId(result.transactionId || '');
 
-      // Create order in TicketSocket (CRM record + ticket fulfillment)
-      fetch('/api/ticketsocket-proxy?action=create-order', {
+      // Step 2: Create order in TSCheckout (payment already processed via PayVia)
+      const orderRes = await fetch('/api/ticketsocket-proxy?action=create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
           firstName,
           lastName,
-          phone,
           ticketQuantity: quantity,
           ticketTypeId,
         }),
-      }).catch(() => {});
+      });
+      const orderResult = await orderRes.json();
+      if (orderResult.success && orderResult.data?.orderId) {
+        setOrderId(String(orderResult.data.orderId));
+      } else {
+        setOrderId(tokenData.invoice);
+      }
 
       setStep('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment failed');
       setStep('error');
     }
-  }, [totalAmount, firstName, lastName, email, phone, event, quantity, ticketTypeId]);
+  }, [totalAmount, firstName, lastName, email, event, quantity, ticketTypeId]);
 
   return (
     <div
