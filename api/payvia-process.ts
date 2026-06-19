@@ -156,6 +156,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { firstName: billingFirstName, lastName: billingLastName } =
       parseCardholderName(cardholderName || `${customerInfo?.firstName || ''} ${customerInfo?.lastName || ''}`);
 
+    // PayVia rejects empty billing-address fields, so coalesce each field
+    // individually — a present billingAddress object with blank fields must not
+    // pass empty strings through.
+    const incomingAddress = customerInfo?.billingAddress || {};
+    const billingAddress = {
+      address1: incomingAddress.address1?.trim() || 'Not Provided',
+      city: incomingAddress.city?.trim() || 'Not Provided',
+      state: incomingAddress.state?.trim() || 'NY',
+      zip: incomingAddress.zip?.trim() || '00000',
+      country: incomingAddress.country?.trim() || 'US',
+    };
+
     const result = await client.processPayment({
       amount,
       orderId: orderId || `ORD-${Date.now()}`,
@@ -163,13 +175,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         firstName: customerInfo?.firstName || billingFirstName,
         lastName: customerInfo?.lastName || billingLastName,
         email: customerInfo?.email || '',
-        billingAddress: customerInfo?.billingAddress || {
-          address1: 'Not Provided',
-          city: 'Not Provided',
-          state: 'NY',
-          zip: '00000',
-          country: 'US',
-        },
+        billingAddress,
       },
       paymentMethodData,
     });
