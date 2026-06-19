@@ -738,6 +738,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
         throw new Error(result.error || 'Payment failed');
       }
 
+      const paymentRef = result.transactionId || tokenData.invoice;
       setTransactionId(result.transactionId || '');
 
       // Step 2: Create order in TSCheckout (payment already processed via PayVia)
@@ -753,12 +754,22 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
         }),
       });
       const orderResult = await orderRes.json();
-      if (orderResult.success && orderResult.data?.orderId) {
-        setOrderId(String(orderResult.data.orderId));
-      } else {
-        setOrderId(tokenData.invoice);
+
+      // Payment already succeeded — if the TicketSocket order fails we must NOT
+      // report a fake success (customer would be charged with no ticket).
+      if (!orderRes.ok || !orderResult.success || !orderResult.data?.orderId) {
+        console.error('[Checkout] TicketSocket order creation failed:', orderResult);
+        setOrderId(paymentRef);
+        setError(
+          `Your payment went through (reference: ${paymentRef}), but we couldn't ` +
+          `finalize your ticket order. Please contact support with this reference ` +
+          `and we'll issue your tickets.`
+        );
+        setStep('error');
+        return;
       }
 
+      setOrderId(String(orderResult.data.orderId));
       setStep('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment failed');

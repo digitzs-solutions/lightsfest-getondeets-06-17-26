@@ -144,12 +144,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const result = await tsResponse.json();
       if (!tsResponse.ok || !result.success) {
+        console.error('[TSCheckout create-order] failed', {
+          status: tsResponse.status,
+          payload: orderPayload,
+          response: result,
+        });
         return res.status(tsResponse.status || 400).json({
           success: false,
           error: result.data?.message || result.message || 'Order creation failed',
           details: result,
         });
       }
+
+      console.log('[TSCheckout create-order] success', {
+        orderId: result.data?.id || result.data?.orderId || null,
+      });
 
       return res.status(200).json({
         success: true,
