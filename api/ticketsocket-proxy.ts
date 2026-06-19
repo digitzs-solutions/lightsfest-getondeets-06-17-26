@@ -88,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         headers,
         body: JSON.stringify({
           includeFees: 1,
-          paymentMethod: 'credit',
+          paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'cash',
           basicInfo: body.basicInfo,
           tickets: body.tickets,
           promoCodes: body.promoCodes,
@@ -122,9 +122,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
+      // Payment is collected externally via PayVia, so the TicketSocket order
+      // must NOT re-charge the card. Use a non-charging payment method
+      // (default 'cash' records the sale amount; override with TS_ORDER_PAYMENT_METHOD
+      // e.g. 'comp'/'check' if your TicketSocket instance prefers another value).
       const orderPayload = {
-        paymentMethod: 'credit',
-        detachPaymentMethod: true,
+        paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'cash',
         emailReceipt: '1',
         includeFees: 1,
         basicInfo: {
@@ -143,27 +146,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       const result = await tsResponse.json();
-      if (!tsResponse.ok || !result.success) {
+      const createdOrderId = result.data?.id || result.data?.orderId || null;
+      // TicketSocket can return HTTP 200 + success:true but still fail the order
+      // at the payment step (e.g. TSD1001). Treat a missing order id or an
+      // embedded error message as a real failure.
+      const orderError = result.data?.error || result.data?.message;
+      if (!tsResponse.ok || !result.success || !createdOrderId || orderError) {
         console.error('[TSCheckout create-order] failed', {
           status: tsResponse.status,
           payload: orderPayload,
           response: result,
         });
-        return res.status(tsResponse.status || 400).json({
+        return res.status(tsResponse.ok ? 400 : tsResponse.status).json({
           success: false,
-          error: result.data?.message || result.message || 'Order creation failed',
+          error: orderError || result.message || 'Order creation failed',
           details: result,
         });
       }
 
-      console.log('[TSCheckout create-order] success', {
-        orderId: result.data?.id || result.data?.orderId || null,
-      });
+      console.log('[TSCheckout create-order] success', { orderId: createdOrderId });
 
       return res.status(200).json({
         success: true,
         data: {
-          orderId: result.data?.id || result.data?.orderId || null,
+          orderId: createdOrderId,
           status: 'completed',
           details: result.data,
         },
