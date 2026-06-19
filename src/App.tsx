@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles, MapPin, Calendar, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, CreditCard, Minus, Plus } from 'lucide-react';
+import { Sparkles, MapPin, Calendar, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, Minus, Plus } from 'lucide-react';
 
 // PayVia Hosted Checkout - matches @digitzs/payvia SDK constants
 const PAYVIA_CHECKOUT_URLS: Record<string, string> = {

@@ -88,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         headers,
         body: JSON.stringify({
           includeFees: 1,
-          paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'cash',
+          paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'credit',
           basicInfo: body.basicInfo,
           tickets: body.tickets,
           promoCodes: body.promoCodes,
@@ -123,11 +123,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Payment is collected externally via PayVia, so the TicketSocket order
-      // must NOT re-charge the card. Use a non-charging payment method
-      // (default 'cash' records the sale amount; override with TS_ORDER_PAYMENT_METHOD
-      // e.g. 'comp'/'check' if your TicketSocket instance prefers another value).
+      // must NOT re-charge the card. paymentMethod='credit' + detachPaymentMethod=true
+      // records the order as a card sale without TicketSocket attempting its own
+      // charge. (A prior revision switched this to 'cash', which TicketSocket's
+      // online order API appears to reject/silently fail for public checkout —
+      // that's the most likely cause of "payment succeeded, no order created.")
       const orderPayload = {
-        paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'cash',
+        paymentMethod: process.env.TS_ORDER_PAYMENT_METHOD || 'credit',
+        detachPaymentMethod: true,
         emailReceipt: '1',
         includeFees: 1,
         basicInfo: {
