@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles, MapPin, Calendar, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, Minus, Plus } from 'lucide-react';
+import { Sparkles, MapPin, X, Lock, Mail, Phone, Loader2, Check, AlertCircle, Music, Users, Heart, ExternalLink, Star, ChevronRight, ChevronDown, Minus, Plus, Shield, Leaf, Clock, Utensils, Camera, Menu } from 'lucide-react';
+import ChatValet from './components/ChatValet';
 
 // PayVia Hosted Checkout - matches @digitzs/payvia SDK constants
 const PAYVIA_CHECKOUT_URLS: Record<string, string> = {
@@ -27,6 +28,7 @@ interface EventItem {
   image: string;
   registrationUrl: string;
   ticketSocketEventId?: string;
+  status?: 'available' | 'sold-out';
 }
 
 interface TicketType {
@@ -73,6 +75,7 @@ const EVENTS: EventItem[] = [
     price: 1.00,
     image: 'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=800',
     registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-austin',
+    status: 'available',
   },
   {
     id: 'denver-aug',
@@ -85,6 +88,7 @@ const EVENTS: EventItem[] = [
     price: 1.00,
     image: 'https://images.pexels.com/photos/1114690/pexels-photo-1114690.jpeg?auto=compress&cs=tinysrgb&w=800',
     registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-denver',
+    status: 'available',
   },
   {
     id: 'nashville-sep',
@@ -97,6 +101,7 @@ const EVENTS: EventItem[] = [
     price: 1.00,
     image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
     registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-nashville',
+    status: 'available',
   },
   {
     id: 'phoenix-oct',
@@ -109,6 +114,7 @@ const EVENTS: EventItem[] = [
     price: 1.00,
     image: 'https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&w=800',
     registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-phoenix',
+    status: 'available',
   },
 ];
 
@@ -120,11 +126,14 @@ export default function App() {
       <Header />
       <Hero />
       <EventsSection onBuyTicket={setCheckoutEvent} />
+      <SafetySection />
+      <EventDaySection />
       <GallerySection />
       <AboutSection />
       <ReviewsSection />
       <FAQSection />
       <Footer />
+      <ChatValet />
 
       {checkoutEvent && (
         <CheckoutModal
@@ -138,12 +147,28 @@ export default function App() {
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [involvedOpen, setInvolvedOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const navLinks = [
+    { label: 'Home', href: '#' },
+    { label: 'Events', href: '#events' },
+    { label: 'FAQ', href: '#faq' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  const involvedLinks = [
+    { label: 'Volunteers', href: 'https://thelightsfest.com/volunteers/' },
+    { label: 'Charities', href: 'https://thelightsfest.com/charities/' },
+    { label: 'Sponsors', href: 'https://thelightsfest.com/sponsors/' },
+    { label: 'Affiliate', href: 'https://thelightsfest.com/affiliate/' },
+  ];
 
   return (
     <header
@@ -154,94 +179,187 @@ function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <a href="#" className="flex items-center gap-2.5">
           <Sparkles className={`w-5 h-5 transition-colors duration-300 ${scrolled ? 'text-amber-500' : 'text-amber-300'}`} />
           <span className={`text-sm font-bold tracking-wider uppercase transition-colors duration-300 ${scrolled ? 'text-slate-900' : 'text-white'}`}>
             The Lights Fest
           </span>
-        </div>
-        <nav className="hidden md:flex items-center gap-8">
-          {['Events', 'Gallery', 'About', 'FAQ'].map((link) => (
+        </a>
+
+        <nav className="hidden lg:flex items-center gap-7">
+          {navLinks.map((link) => (
             <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
+              key={link.label}
+              href={link.href}
               className={`text-xs font-medium tracking-wide uppercase transition-colors duration-300 hover:opacity-100 ${
                 scrolled ? 'text-slate-500 hover:text-slate-900' : 'text-white/70 hover:text-white'
               }`}
             >
-              {link}
+              {link.label}
             </a>
           ))}
+
+          <div className="relative">
+            <button
+              onClick={() => setInvolvedOpen(!involvedOpen)}
+              onBlur={() => setTimeout(() => setInvolvedOpen(false), 150)}
+              className={`flex items-center gap-1 text-xs font-medium tracking-wide uppercase transition-colors duration-300 hover:opacity-100 ${
+                scrolled ? 'text-slate-500 hover:text-slate-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Get Involved
+              <ChevronDown className="w-3 h-3" />
+            </button>
+            {involvedOpen && (
+              <div className="absolute top-8 left-0 bg-white rounded-xl shadow-xl border border-slate-100 py-2 w-44 animate-fadeIn">
+                {involvedLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-4 py-2 text-xs text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <a
+            href="https://shop.thelightsfest.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`text-xs font-medium tracking-wide uppercase transition-colors duration-300 hover:opacity-100 ${
+              scrolled ? 'text-slate-500 hover:text-slate-900' : 'text-white/70 hover:text-white'
+            }`}
+          >
+            Store
+          </a>
         </nav>
-        <a
-          href="#events"
-          className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
-            scrolled
-              ? 'bg-amber-500 text-white shadow-sm hover:bg-amber-600'
-              : 'bg-white/15 text-white border border-white/25 hover:bg-white/25'
-          }`}
-        >
-          Get Tickets
-        </a>
+
+        <div className="flex items-center gap-3">
+          <a
+            href="#events"
+            className={`hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold transition-all duration-300 ${
+              scrolled
+                ? 'bg-amber-500 text-white shadow-sm hover:bg-amber-600'
+                : 'bg-white/15 text-white border border-white/25 hover:bg-white/25'
+            }`}
+          >
+            Get Tickets
+          </a>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className={`lg:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/80 hover:bg-white/10'}`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+
+      {mobileOpen && (
+        <div className="lg:hidden bg-white border-t border-slate-100 shadow-lg animate-fadeIn">
+          <div className="px-5 py-4 space-y-3">
+            {navLinks.map((link) => (
+              <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-slate-700 py-1.5">
+                {link.label}
+              </a>
+            ))}
+            <div className="border-t border-slate-100 pt-3 mt-3">
+              <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2">Get Involved</p>
+              {involvedLinks.map((link) => (
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="block text-sm text-slate-600 py-1.5">
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <img
           src="https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          alt="Sky lanterns rising into the night"
+          alt="Thousands of sky lanterns rising into the night sky at The Lights Fest"
           className="w-full h-full object-cover"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/30 to-slate-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
       </div>
 
       <div className="lantern-field absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 14 }).map((_, i) => (
+        {Array.from({ length: 18 }).map((_, i) => (
           <div
             key={i}
             className="lantern"
             style={{
-              left: `${5 + (i * 7) % 90}%`,
-              animationDelay: `${(i * 1.7) % 12}s`,
-              animationDuration: `${14 + (i % 5) * 3}s`,
+              left: `${3 + (i * 5.5) % 92}%`,
+              animationDelay: `${(i * 1.4) % 14}s`,
+              animationDuration: `${12 + (i % 6) * 3}s`,
             }}
           />
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" style={{ top: '70%' }} />
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" style={{ top: '75%' }} />
 
-      <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-        <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extralight text-white leading-[1.05] tracking-tight mb-6">
-          Light the sky.
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 mb-8">
+          <Heart className="w-3 h-3 text-amber-300" />
+          <span className="text-[11px] font-medium text-white/80 tracking-wide uppercase">A Family Experience Since 2014</span>
+        </div>
+
+        <h1 className="text-5xl sm:text-7xl lg:text-[5.5rem] font-extralight text-white leading-[1.05] tracking-tight mb-6">
+          Until the
           <br />
           <span className="font-semibold bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-200 bg-clip-text text-transparent">
-            Make a wish.
+            next light.
           </span>
         </h1>
-        <p className="text-base sm:text-lg text-white/60 max-w-lg mx-auto leading-relaxed font-light mb-10">
-          Join thousands as we release sky lanterns together in a breathtaking moment of collective wonder.
+
+        <p className="text-base sm:text-lg text-white/60 max-w-xl mx-auto leading-relaxed font-light mb-10">
+          Bringing families together under glowing skies. Write your wishes, light your lantern, and watch thousands rise together in a breathtaking moment you'll never forget.
         </p>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="#events"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-amber-500 text-white font-semibold text-sm tracking-wide hover:bg-amber-600 transition-all shadow-[0_8px_30px_rgba(245,158,11,0.35)] hover:shadow-[0_12px_40px_rgba(245,158,11,0.45)] active:scale-[0.97]"
           >
-            Find Your Event
+            View Events
             <ChevronRight className="w-4 h-4" />
           </a>
           <a
-            href="#gallery"
+            href="#about"
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-all"
           >
-            See the Magic
+            Learn More
           </a>
+        </div>
+
+        <div className="mt-14 flex items-center justify-center gap-8 text-white/40">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white/80">1M+</div>
+            <div className="text-[10px] uppercase tracking-wider">Guests</div>
+          </div>
+          <div className="w-px h-8 bg-white/20" />
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white/80">50+</div>
+            <div className="text-[10px] uppercase tracking-wider">Cities</div>
+          </div>
+          <div className="w-px h-8 bg-white/20" />
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white/80">All Ages</div>
+            <div className="text-[10px] uppercase tracking-wider">Welcome</div>
+          </div>
         </div>
       </div>
     </section>
@@ -270,6 +388,7 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
             image: ev.imageUrl || ev.image || 'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=800',
             registrationUrl: ev.url || '',
             ticketSocketEventId: String(ev.id),
+            status: 'available' as const,
           }));
           setEvents(liveEvents);
         }
@@ -284,70 +403,139 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
 
   return (
     <section id="events" className="py-24 px-5 sm:px-8 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-100 text-[11px] font-semibold text-amber-700 uppercase tracking-wider mb-4">
-            <Calendar className="w-3 h-3" />
-            2026 Tour Dates
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-light text-slate-900 tracking-tight mb-3">
-            Choose your city
-          </h2>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-xs font-semibold tracking-[0.2em] uppercase text-amber-600 mb-3">The Lights Fest</h2>
+          <h3 className="text-3xl sm:text-4xl font-light text-slate-900 tracking-tight mb-3">
+            Sky Lantern Festivals
+          </h3>
           <p className="text-slate-400 text-sm max-w-md mx-auto">
-            Four unforgettable evenings across the country. Each event includes a lantern kit, live music, and food vendors.
+            Choose your city below. Each event includes a lantern kit, live music, food vendors, and the synchronized release.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {loading ? (
-            <div className="col-span-full flex items-center justify-center py-12">
-              <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
-            </div>
-          ) : events.map((event) => (
-            <div
-              key={event.id}
-              className="group bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1"
-            >
-              <div className="relative h-44 overflow-hidden">
-                <img
-                  src={event.image}
-                  alt={`${event.city} event`}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute top-3 right-3 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-[10px] font-bold text-amber-600">
-                  ${event.price.toFixed(2)}
-                </div>
-                <div className="absolute bottom-3 left-3">
-                  <div className="text-white font-semibold text-sm">{event.city}, {event.state}</div>
-                  <div className="text-white/70 text-[11px]">{event.dateLabel}</div>
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="text-[11px] text-slate-400 mb-3 flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3" />
-                  {event.venue}
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+          </div>
+        ) : (
+          <div className="space-y-0 border border-slate-100 rounded-2xl overflow-hidden">
+            {events.map((event, idx) => (
+              <div
+                key={event.id}
+                className={`flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 sm:px-8 py-6 hover:bg-amber-50/40 transition-colors group ${
+                  idx < events.length - 1 ? 'border-b border-slate-100' : ''
+                }`}
+              >
+                <div className="flex-1 mb-3 sm:mb-0">
+                  <div className="text-[11px] font-semibold text-amber-600 uppercase tracking-wider mb-1">
+                    {event.dateLabel}
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-semibold text-slate-900 group-hover:text-amber-700 transition-colors">
+                    {event.city}, {event.state}
+                  </h4>
+                  <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-400">
+                    <MapPin className="w-3 h-3" />
+                    {event.venue}
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => onBuyTicket(event)}
-                    className="flex-1 py-2.5 rounded-lg bg-amber-500 text-white text-xs font-semibold hover:bg-amber-600 transition-all active:scale-[0.97]"
-                  >
-                    Buy Now
-                  </button>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-slate-700">${event.price.toFixed(2)}</span>
+                  {event.status === 'sold-out' ? (
+                    <span className="px-4 py-2.5 rounded-full bg-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wide">
+                      Sold Out
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => onBuyTicket(event)}
+                      className="px-5 py-2.5 rounded-full bg-amber-500 text-white text-xs font-semibold uppercase tracking-wide hover:bg-amber-600 transition-all shadow-sm hover:shadow-md active:scale-[0.97]"
+                    >
+                      Register Now
+                    </button>
+                  )}
                   <a
                     href={event.registrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 text-slate-400 hover:text-amber-600 hover:border-amber-200 transition-colors"
+                    className="flex items-center justify-center w-9 h-9 rounded-full border border-slate-200 text-slate-400 hover:text-amber-600 hover:border-amber-200 transition-colors"
+                    title="View on TicketSocket"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>
+            ))}
+          </div>
+        )}
+
+        <p className="text-center text-[11px] text-slate-400 mt-6">
+          Prices are limited and increase as tickets sell. Reserve early for the best rate.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function SafetySection() {
+  const pillars = [
+    {
+      icon: Shield,
+      title: 'Family Safe',
+      items: [
+        'All-ages event for the whole family',
+        'Certified fire professionals on-site',
+        'Ample security at every event',
+        'No alcohol permitted',
+      ],
+    },
+    {
+      icon: Leaf,
+      title: '100% Biodegradable',
+      items: [
+        'Rice paper, string, and bamboo only',
+        'No metal wire in our lanterns',
+        '24-hour cleanup crew after each event',
+        'Reduced flight time for safer landings',
+      ],
+    },
+    {
+      icon: Heart,
+      title: 'Giving Back',
+      items: [
+        'Local charity partnerships every city',
+        'Community volunteer opportunities',
+        'Portion of proceeds support causes',
+        'Building connections since 2014',
+      ],
+    },
+  ];
+
+  return (
+    <section className="py-24 px-5 sm:px-8 bg-slate-50">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Safety is our cornerstone</h2>
+          <p className="text-slate-400 text-sm max-w-lg mx-auto">
+            Perfect safety record across dozens of events in multiple countries. We bring certified fire professionals and custom-designed lanterns to every city.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {pillars.map(({ icon: Icon, title, items }) => (
+            <div key={title} className="bg-white rounded-2xl p-7 border border-slate-100 shadow-sm">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-5">
+                <Icon className="w-5 h-5 text-amber-600" />
+              </div>
+              <h3 className="text-base font-semibold text-slate-900 mb-4">{title}</h3>
+              <ul className="space-y-2.5">
+                {items.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-slate-500">
+                    <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -356,36 +544,91 @@ function EventsSection({ onBuyTicket }: { onBuyTicket: (e: EventItem) => void })
   );
 }
 
+function EventDaySection() {
+  const timeline = [
+    { time: '5:30 PM', icon: Clock, title: 'Gates Open', description: 'Arrive early to explore vendors, grab food, and find your spot.' },
+    { time: '6:00 PM', icon: Music, title: 'Live Music Begins', description: 'DJ and acoustic performances set the mood as the sun starts to set.' },
+    { time: '7:00 PM', icon: Sparkles, title: 'Lantern Decorating', description: 'Write messages of hope, wishes, or memories on your lantern with markers.' },
+    { time: '8:30 PM', icon: Utensils, title: 'Last Call for Food', description: 'Enjoy food trucks offering a variety of cuisines before the big moment.' },
+    { time: '8:45 PM', icon: Star, title: 'The Lantern Release', description: 'The synchronized release. Thousands of lanterns rise together at nightfall.' },
+  ];
+
+  return (
+    <section id="event-day" className="py-24 px-5 sm:px-8 bg-white">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Your event day</h2>
+          <p className="text-slate-400 text-sm max-w-md mx-auto">
+            Gates open a couple hours before sunset. Here's what to expect at a typical Lights Fest evening.
+          </p>
+        </div>
+
+        <div className="relative">
+          <div className="absolute left-6 top-0 bottom-0 w-px bg-amber-100 hidden sm:block" />
+
+          <div className="space-y-8">
+            {timeline.map(({ time, icon: Icon, title, description }) => (
+              <div key={title} className="flex gap-5 sm:gap-8 items-start">
+                <div className="relative flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-amber-600" />
+                  </div>
+                </div>
+                <div className="pt-1">
+                  <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">{time}</div>
+                  <h4 className="text-base font-semibold text-slate-900 mb-1">{title}</h4>
+                  <p className="text-sm text-slate-500 leading-relaxed">{description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-14 bg-amber-50 rounded-2xl p-6 border border-amber-100">
+          <h4 className="text-sm font-semibold text-slate-800 mb-2">What to bring</h4>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Blankets or camping chairs, comfortable shoes, and your camera. Outside food is typically allowed (varies by venue). Your Participant Packet with full details will be emailed one week before your event.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function GallerySection() {
   const images = [
-    'https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/1114690/pexels-photo-1114690.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/3560168/pexels-photo-3560168.jpeg?auto=compress&cs=tinysrgb&w=600',
+    { src: 'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Thousands of lanterns rising into the night sky' },
+    { src: 'https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Family watching lanterns together' },
+    { src: 'https://images.pexels.com/photos/1114690/pexels-photo-1114690.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Live music performance at the festival' },
+    { src: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Festival crowd enjoying the night' },
+    { src: 'https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Lanterns floating peacefully above the crowd' },
+    { src: 'https://images.pexels.com/photos/3560168/pexels-photo-3560168.jpeg?auto=compress&cs=tinysrgb&w=600', alt: 'Decorating lanterns with heartfelt messages' },
   ];
 
   return (
     <section id="gallery" className="py-24 px-5 sm:px-8 bg-slate-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Captured moments</h2>
-          <p className="text-slate-400 text-sm">Every event is a once-in-a-lifetime experience</p>
+          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Moments to remember</h2>
+          <p className="text-slate-400 text-sm">Every event creates memories that last a lifetime</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {images.map((src, i) => (
+          {images.map((img, i) => (
             <div
               key={i}
               className={`relative overflow-hidden rounded-xl ${i === 0 ? 'md:row-span-2' : ''} group`}
             >
               <img
-                src={src}
-                alt="Festival moment"
+                src={img.src}
+                alt={img.alt}
                 className={`w-full object-cover transition-transform duration-500 group-hover:scale-105 ${i === 0 ? 'h-full min-h-[300px]' : 'h-48 md:h-56'}`}
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-end">
+                <div className="p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Camera className="w-4 h-4 text-white/80" />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -401,17 +644,20 @@ function AboutSection() {
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-5">More than a festival</h2>
-            <p className="text-slate-500 text-sm leading-relaxed mb-6">
-              The Lights Fest is the world's largest sky lantern festival tour. Since 2014, over 1 million guests have shared in the magic of releasing lanterns into the night sky together.
+            <p className="text-slate-500 text-sm leading-relaxed mb-5">
+              The Lights Fest is where dreams take flight and create a spectacle that will leave you breathless. Since 2014, over one million families and friends have shared in the magic of releasing lanterns into the night sky together.
+            </p>
+            <p className="text-slate-500 text-sm leading-relaxed mb-5">
+              Whether you're seeking a romantic escapade, a joyful celebration, or a serene moment of reflection, our sky lantern event promises an unforgettable experience for all ages.
             </p>
             <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              Each event features live music, food trucks, lantern decorating stations, and the main event -- a synchronized lantern release that illuminates the sky with thousands of lights.
+              In this shared celebration, you'll find a sense of unity and belonging. Embrace the warmth of human connection as you share stories, laughter, and heartfelt moments with fellow sky gazers.
             </p>
             <div className="grid grid-cols-3 gap-6">
               {[
-                { icon: Music, label: 'Live Music', value: 'DJ + Acoustic' },
-                { icon: Users, label: 'Attendance', value: '5,000+ guests' },
-                { icon: Heart, label: 'Experience', value: 'Since 2014' },
+                { icon: Users, label: 'Family-Friendly', value: 'All Ages' },
+                { icon: Music, label: 'Entertainment', value: 'Live Music' },
+                { icon: Heart, label: 'Creating Memories', value: 'Since 2014' },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="text-center">
                   <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mx-auto mb-2">
@@ -426,7 +672,7 @@ function AboutSection() {
           <div className="relative">
             <img
               src="https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="Lanterns floating into the night sky"
+              alt="Families watching lanterns float into the night sky together"
               className="rounded-2xl shadow-2xl w-full"
               loading="lazy"
             />
@@ -440,22 +686,22 @@ function AboutSection() {
 
 function ReviewsSection() {
   const reviews = [
-    { name: 'Sarah M.', city: 'Austin, TX', text: 'Absolutely magical. The moment everyone released their lanterns together... I still get chills thinking about it.', stars: 5 },
-    { name: 'Jake R.', city: 'Denver, CO', text: 'Brought my family and we all loved it. The kids decorated their lanterns and the music was great. Unforgettable night.', stars: 5 },
-    { name: 'Priya K.', city: 'Nashville, TN', text: 'Perfect date night. The food trucks were excellent and the main lantern release was the most beautiful thing I have ever seen.', stars: 5 },
+    { name: 'Sarah M.', city: 'Austin, TX', text: 'Brought grandma, parents, and kids. The moment everyone released their lanterns together... it was the most beautiful thing we have ever experienced as a family.' },
+    { name: 'The Garcia Family', city: 'Denver, CO', text: 'Our kids decorated their lanterns with wishes for the new year. Watching their faces light up as thousands of lanterns rose was absolutely priceless.' },
+    { name: 'Priya & James', city: 'Nashville, TN', text: 'We came for date night and brought our 4-year-old. She still talks about "the night the sky was full of stars we made." Unforgettable.' },
   ];
 
   return (
     <section className="py-24 px-5 sm:px-8 bg-slate-50">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">What guests are saying</h2>
+          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">What families are saying</h2>
         </div>
         <div className="grid sm:grid-cols-3 gap-6">
           {reviews.map((r) => (
             <div key={r.name} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
               <div className="flex gap-0.5 mb-3">
-                {Array.from({ length: r.stars }).map((_, i) => (
+                {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 ))}
               </div>
@@ -473,17 +719,20 @@ function ReviewsSection() {
 function FAQSection() {
   const [open, setOpen] = useState<number | null>(null);
   const faqs = [
-    { q: 'What is included with my ticket?', a: 'Each ticket includes entry to the event, one lantern kit with markers for decorating, access to live music performances, and the synchronized lantern release experience.' },
-    { q: 'Are the lanterns eco-friendly?', a: 'Yes! Our lanterns are made from 100% biodegradable rice paper and bamboo. The fuel cell is a small wax disc. We also organize post-event cleanup crews.' },
-    { q: 'What time should I arrive?', a: 'Gates typically open 2-3 hours before the lantern release. We recommend arriving early to enjoy the music, food, and lantern decorating stations.' },
-    { q: 'Can I get a refund?', a: 'We offer full refunds up to 7 days before the event, and 50% refunds within 7 days. No refunds on the day of the event. Contact us for transfers to other dates.' },
+    { q: 'Is this event appropriate for all ages?', a: 'Absolutely! The Lights Fest is for all ages. There is nothing like seeing the amazement in a child\'s eyes as they gaze up at this magical sight. There is ample security at each event, no alcohol is permitted, and it\'s designed to be a positive, uplifting experience for the whole family.' },
+    { q: 'What is included with my ticket?', a: 'Each adult ticket includes entry to the event, one lantern kit with markers for decorating, access to live music performances, food vendors, and the synchronized lantern release. Kids tickets (ages 4-12) include a Fun Kit. Children 3 and under are free.' },
+    { q: 'Are the lanterns safe and eco-friendly?', a: 'Yes! Our lanterns are made from 100% biodegradable rice paper, string, and bamboo. There is no metal wire. The rice-paper body is fire-resistant. We hire certified fire professionals at every event and maintain a perfect safety record across dozens of events.' },
+    { q: 'What time should we arrive?', a: 'Gates open 2-3 hours before sunset. We recommend arriving early to enjoy the live music, food trucks, and lantern decorating stations. The synchronized release takes place at nightfall (approximately 8:45 PM, depending on sunset).' },
+    { q: 'What if the weather is bad?', a: 'Event dates are subject to change due to weather. If a Friday/Saturday event is cancelled, the first backup is Sunday of the same weekend. If a make-up date is not scheduled within 90 days, full refunds are offered. Your tickets remain valid for the rescheduled date.' },
+    { q: 'Can I get a refund or transfer my tickets?', a: 'Tickets are transferable to another person or location by emailing info@thelightsfest.com. As stated at purchase, tickets are non-refundable unless the event is cancelled. If you purchased the optional Refund Protection Plan, you can submit a refund request.' },
   ];
 
   return (
     <section id="faq" className="py-24 px-5 sm:px-8 bg-white">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Common questions</h2>
+          <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-3">Frequently asked questions</h2>
+          <p className="text-slate-400 text-sm">Everything you need to know before your event</p>
         </div>
         <div className="space-y-3">
           {faqs.map((faq, i) => (
@@ -492,8 +741,8 @@ function FAQSection() {
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-50 transition-colors"
               >
-                <span className="text-sm font-medium text-slate-800">{faq.q}</span>
-                <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${open === i ? 'rotate-90' : ''}`} />
+                <span className="text-sm font-medium text-slate-800 pr-4">{faq.q}</span>
+                <ChevronRight className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform duration-200 ${open === i ? 'rotate-90' : ''}`} />
               </button>
               {open === i && (
                 <div className="px-5 pb-4 text-sm text-slate-500 leading-relaxed">{faq.a}</div>
@@ -508,52 +757,76 @@ function FAQSection() {
 
 function Footer() {
   return (
-    <footer className="bg-slate-900 py-16 px-5 sm:px-8">
+    <footer id="contact" className="bg-slate-900 py-16 px-5 sm:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-amber-400" />
               <span className="text-sm font-bold text-white tracking-wider uppercase">The Lights Fest</span>
             </div>
-            <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-              The world's largest touring sky lantern festival. Creating unforgettable shared experiences since 2014.
+            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              Creating magical moments that connect people and light up the world, one city at a time. A family experience since 2014.
+            </p>
+            <p className="text-xs text-slate-500">
+              Produced by Viive Events
             </p>
           </div>
-          <div className="flex gap-12">
-            <div>
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Events</div>
-              <div className="space-y-2">
-                {EVENTS.map((e) => (
-                  <a key={e.id} href={e.registrationUrl} target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">
-                    {e.city}, {e.state} - {e.dateLabel}
-                  </a>
-                ))}
-              </div>
+
+          <div>
+            <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-4">Events</h4>
+            <div className="space-y-2.5">
+              {EVENTS.map((e) => (
+                <a key={e.id} href={e.registrationUrl} target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">
+                  {e.city}, {e.state} &middot; {e.dateLabel}
+                </a>
+              ))}
             </div>
-            <div>
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Links</div>
-              <div className="space-y-2">
-                <a href="https://thelightsfest.com" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Official Site</a>
-                <a href="#faq" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">FAQ</a>
-                <a href="#about" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">About</a>
-              </div>
+          </div>
+
+          <div>
+            <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-4">Get Involved</h4>
+            <div className="space-y-2.5">
+              <a href="https://thelightsfest.com/volunteers/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Volunteers</a>
+              <a href="https://thelightsfest.com/charities/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Charities</a>
+              <a href="https://thelightsfest.com/sponsors/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Sponsors / Exhibitors</a>
+              <a href="https://thelightsfest.com/affiliate/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Affiliate</a>
+              <a href="https://thelightsfest.com/food/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Food Vendors</a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick Links</h4>
+            <div className="space-y-2.5">
+              <a href="#faq" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">FAQ</a>
+              <a href="https://thelightsfest.com/contact/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Contact</a>
+              <a href="https://shop.thelightsfest.com" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Store</a>
+              <a href="https://thelightsfest.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Privacy Policy</a>
+              <a href="https://thelightsfest.com" target="_blank" rel="noopener noreferrer" className="block text-xs text-slate-400 hover:text-amber-400 transition-colors">Official Site</a>
             </div>
           </div>
         </div>
+
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[11px] text-slate-500">
-            &copy; {new Date().getFullYear()} The Lights Festival LLC. All rights reserved.
+            &copy; {new Date().getFullYear()} The Lights Fest. All Rights Reserved.
           </p>
-          <div className="flex items-center gap-2 text-[10px] text-slate-600">
-            <Lock className="w-3 h-3" />
-            PCI DSS 4.0 Level 1 Compliant
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+              <Lock className="w-3 h-3" />
+              PCI DSS 4.0 Level 1
+            </div>
+            <span className="text-[10px] text-slate-700">Powered by GetOnDeets.ai</span>
           </div>
         </div>
       </div>
     </footer>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHECKOUT MODAL - PayVia + TicketSocket (unchanged payment logic)
+// ─────────────────────────────────────────────────────────────────────────────
 
 type CheckoutStep = 'tickets' | 'contact' | 'payment' | 'processing' | 'success' | 'error';
 
@@ -606,7 +879,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     fetchTicketTypes();
   }, [event]);
 
-  // PayVia checkout iframe postMessage handler
   useEffect(() => {
     if (step !== 'payment') return;
 
@@ -643,10 +915,10 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       configSentRef.current = true;
     }
 
-    function handleMessage(event: MessageEvent) {
-      if (!PAYVIA_ALLOWED_ORIGINS.includes(event.origin)) return;
+    function handleMessage(ev: MessageEvent) {
+      if (!PAYVIA_ALLOWED_ORIGINS.includes(ev.origin)) return;
 
-      const message = event.data;
+      const message = ev.data;
       switch (message.type) {
         case 'digitzs:ready':
           setIframeReady(true);
@@ -681,8 +953,8 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       if (!configSentRef.current) {
         setIframeReady(true);
         setError(
-          'Payment form could not load. The PayVia checkout iframe requires this site to be served from a TokenEx-whitelisted domain (getondeets.ai). ' +
-          'Please deploy to your production domain or contact TokenEx to whitelist additional origins.'
+          'Payment form could not load. This site must be served from a TokenEx-whitelisted domain (getondeets.ai). ' +
+          'Deploy to your production domain or contact TokenEx to whitelist additional origins.'
         );
       }
     }, 10000);
@@ -721,7 +993,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     setStep('processing');
     setError('');
     try {
-      // Step 1: Process payment via PayVia
       const res = await fetch('/api/payvia-process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -753,7 +1024,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       const paymentRef = result.transactionId || tokenData.invoice;
       setTransactionId(result.transactionId || '');
 
-      // Step 2: Create order in TSCheckout (payment already processed via PayVia)
       const orderRes = await fetch('/api/ticketsocket-proxy?action=create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -767,8 +1037,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       });
       const orderResult = await orderRes.json();
 
-      // Payment already succeeded — if the TicketSocket order fails we must NOT
-      // report a fake success (customer would be charged with no ticket).
       if (!orderRes.ok || !orderResult.success || !orderResult.data?.orderId) {
         console.error('[Checkout] TicketSocket order creation failed:', orderResult);
         setOrderId(paymentRef);
@@ -795,7 +1063,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
       onClick={(e) => { if (e.target === e.currentTarget && step !== 'processing') onClose(); }}
     >
       <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl animate-slideUp overflow-hidden max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center">
@@ -812,7 +1079,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
           )}
         </div>
 
-        {/* Progress Steps */}
         {step !== 'success' && step !== 'error' && (
           <div className="px-6 pt-4">
             <div className="flex items-center gap-1">
@@ -835,7 +1101,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
         )}
 
         <div className="p-6">
-          {/* Event Info */}
           {step !== 'success' && (
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
               <div>
@@ -848,7 +1113,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Error Display */}
           {error && step !== 'success' && (
             <div className="flex items-center gap-2.5 p-3 mb-5 rounded-xl bg-red-50 border border-red-100">
               <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -856,7 +1120,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Step 1: Ticket Selection */}
           {step === 'tickets' && (
             <div className="space-y-4">
               <div>
@@ -919,7 +1182,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Step 2: Contact Info */}
           {step === 'contact' && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
@@ -959,7 +1221,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Step 3: Payment via PayVia Hosted Checkout */}
           {step === 'payment' && (
             <div className="space-y-4">
               <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white">
@@ -994,16 +1255,14 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Processing */}
           {step === 'processing' && (
             <div className="text-center py-10">
               <Loader2 className="w-10 h-10 text-amber-500 animate-spin mx-auto mb-4" />
               <h3 className="text-base font-semibold text-slate-800 mb-1">Processing payment...</h3>
-              <p className="text-xs text-slate-400">Charging via PayVia gateway</p>
+              <p className="text-xs text-slate-400">Securing your tickets via PayVia</p>
             </div>
           )}
 
-          {/* Success */}
           {step === 'success' && (
             <div className="text-center py-6">
               <div className="w-14 h-14 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -1023,7 +1282,6 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
             </div>
           )}
 
-          {/* Error */}
           {step === 'error' && (
             <div className="text-center py-6">
               <div className="w-14 h-14 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-5">
