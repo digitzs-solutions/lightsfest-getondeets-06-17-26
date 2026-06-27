@@ -72,7 +72,7 @@ const EVENTS: EventItem[] = [
     venue: 'Circuit of The Americas',
     price: 1.00,
     image: 'https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=800',
-    registrationUrl: 'https://clevergroup.tscheckout.com/e/anas/the-lights-fest-austin',
+    registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-austin',
   },
   {
     id: 'denver-aug',
@@ -84,7 +84,7 @@ const EVENTS: EventItem[] = [
     venue: 'Bandimere Speedway',
     price: 1.00,
     image: 'https://images.pexels.com/photos/1114690/pexels-photo-1114690.jpeg?auto=compress&cs=tinysrgb&w=800',
-    registrationUrl: 'https://clevergroup.tscheckout.com/e/anas/the-lights-fest-denver',
+    registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-denver',
   },
   {
     id: 'nashville-sep',
@@ -96,7 +96,7 @@ const EVENTS: EventItem[] = [
     venue: 'Nashville Superspeedway',
     price: 1.00,
     image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-    registrationUrl: 'https://clevergroup.tscheckout.com/e/anas/the-lights-fest-nashville',
+    registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-nashville',
   },
   {
     id: 'phoenix-oct',
@@ -108,7 +108,7 @@ const EVENTS: EventItem[] = [
     venue: 'Wild Horse Pass Motorsports Park',
     price: 1.00,
     image: 'https://images.pexels.com/photos/1387577/pexels-photo-1387577.jpeg?auto=compress&cs=tinysrgb&w=800',
-    registrationUrl: 'https://clevergroup.tscheckout.com/e/anas/the-lights-fest-phoenix',
+    registrationUrl: 'https://clevergroup.tscheckout.com/e/clevergroup/the-lights-fest-phoenix',
   },
 ];
 
@@ -676,7 +676,19 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
     }
 
     window.addEventListener('message', handleMessage);
+
+    const iframeTimeout = setTimeout(() => {
+      if (!configSentRef.current) {
+        setIframeReady(true);
+        setError(
+          'Payment form could not load. The PayVia checkout iframe requires this site to be served from a TokenEx-whitelisted domain (getondeets.ai). ' +
+          'Please deploy to your production domain or contact TokenEx to whitelist additional origins.'
+        );
+      }
+    }, 10000);
+
     return () => {
+      clearTimeout(iframeTimeout);
       window.removeEventListener('message', handleMessage);
       configSentRef.current = false;
       tokenProcessedRef.current = false;
@@ -951,7 +963,7 @@ function CheckoutModal({ event, onClose }: { event: EventItem; onClose: () => vo
           {step === 'payment' && (
             <div className="space-y-4">
               <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white">
-                {!iframeReady && (
+                {!iframeReady && !error && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
                     <div className="flex flex-col items-center gap-2">
                       <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
